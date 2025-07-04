@@ -15,8 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import com.auction.common.PageInfo;
 import com.auction.vo.BidDTO;
+import com.auction.vo.MemberDTO;
 import com.auction.vo.ProductDTO;
 
 public class ProductDAO {
@@ -92,20 +100,25 @@ public class ProductDAO {
         List<ProductDTO> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        String sql = "SELECT *\r\n"
-        		+ "FROM (\r\n"
-        		+ "SELECT ROWNUM AS RNUM, A.*\r\n"
-        		+ "FROM (\r\n"
-        		+ "SELECT\r\n"
-        		+ "P.PRODUCT_ID, P.PRODUCT_NAME, P.ARTIST_NAME, P.START_PRICE,\r\n"
-        		+ "P.CURRENT_PRICE, P.END_TIME, P.IMAGE_RENAMED_NAME\r\n"
-        		+ "FROM PRODUCT P\r\n"
-        		+ "WHERE P.STATUS = 'A'\r\n"
-        		+ "AND P.CATEGORY = ?\r\n"
-        		+ "ORDER BY P.END_TIME ASC\r\n"
-        		+ ") A\r\n"
-        		+ ")\r\n"
-        		+ "WHERE RNUM BETWEEN ? AND ?";
+        String sql = "SELECT *\n"
+        		                  + "FROM (\n"
+        		                  + "  SELECT ROWNUM AS RNUM, A.*\n"
+        		                  + "  FROM (\n"
+        		                  + "    SELECT\n"
+        		                  + "      P.PRODUCT_ID,\n"
+        		                  + "      P.PRODUCT_NAME,\n"
+        		                  + "      P.ARTIST_NAME,\n"
+        		                  + "      P.START_PRICE,\n"
+        		                  + "      P.CURRENT_PRICE,\n"
+        		                  + "      P.STATUS,\n"                                   // ← 추가
+        		                  + "      P.END_TIME,\n"
+        		                  + "      P.IMAGE_RENAMED_NAME\n"
+        		                  + "    FROM PRODUCT P\n"
+        		                  + "    WHERE P.STATUS = 'A'\n"
+        		                  + "      AND P.CATEGORY = ?\n"
+        		                  + "    ORDER BY P.END_TIME ASC\n"
+        		                  + "  ) A\n"
+        		                  + ") WHERE RNUM BETWEEN ? AND ?";
         try {
             pstmt = conn.prepareStatement(sql);
             int startRow = (pi.getCurrentPage() - 1) * pi.getBoardLimit() + 1;
@@ -120,6 +133,7 @@ public class ProductDAO {
                 p.setProductName(rs.getString("PRODUCT_NAME"));
                 p.setArtistName(rs.getString("ARTIST_NAME"));
                 p.setCurrentPrice(rs.getInt("CURRENT_PRICE"));
+                p.setStatus(rs.getString("STATUS"));
                 p.setImageRenamedName(rs.getString("IMAGE_RENAMED_NAME"));
                 p.setEndTime(rs.getTimestamp("END_TIME"));
                 list.add(p);
@@ -161,7 +175,7 @@ public class ProductDAO {
         		+ "SELECT ROWNUM AS RNUM, A.*\r\n"
         		+ "FROM (\r\n"
         		+ "SELECT\r\n"
-        		+ "P.PRODUCT_ID, P.PRODUCT_NAME, P.ARTIST_NAME, P.START_PRICE,\r\n"
+        		+ "P.PRODUCT_ID, P.PRODUCT_NAME, P.ARTIST_NAME, P.START_PRICE, p.status ,\r\n"
         		+ "P.CURRENT_PRICE, P.END_TIME, P.IMAGE_RENAMED_NAME\r\n"
         		+ "FROM PRODUCT P\r\n"
         		+ "WHERE P.STATUS = 'A'\r\n"
@@ -185,6 +199,7 @@ public class ProductDAO {
                 p.setProductName(rs.getString("PRODUCT_NAME"));
                 p.setArtistName(rs.getString("ARTIST_NAME"));
                 p.setCurrentPrice(rs.getInt("CURRENT_PRICE"));
+                p.setStatus(rs.getString("STATUS"));
                 p.setImageRenamedName(rs.getString("IMAGE_RENAMED_NAME"));
                 p.setEndTime(rs.getTimestamp("END_TIME"));
                 list.add(p);
@@ -219,7 +234,7 @@ public class ProductDAO {
         		+ "SELECT ROWNUM AS RNUM, A.*\r\n"
         		+ "FROM (\r\n"
         		+ "SELECT\r\n"
-        		+ "P.PRODUCT_ID, P.PRODUCT_NAME, P.ARTIST_NAME, P.START_PRICE,\r\n"
+        		+ "P.PRODUCT_ID, P.PRODUCT_NAME, P.ARTIST_NAME, P.START_PRICE, p.status ,\r\n"
         		+ "P.CURRENT_PRICE, P.END_TIME, P.IMAGE_RENAMED_NAME\r\n"
         		+ "FROM PRODUCT P\r\n"
         		+ "WHERE P.STATUS = 'A'\r\n"
@@ -240,6 +255,7 @@ public class ProductDAO {
                 p.setProductName(rs.getString("PRODUCT_NAME"));
                 p.setArtistName(rs.getString("ARTIST_NAME"));
                 p.setStartPrice(rs.getInt("START_PRICE"));
+                p.setStatus(rs.getString("STATUS")); 
                 p.setCurrentPrice(rs.getInt("CURRENT_PRICE"));
                 p.setEndTime(rs.getTimestamp("END_TIME"));
                 p.setImageRenamedName(rs.getString("IMAGE_RENAMED_NAME"));
@@ -298,13 +314,13 @@ public class ProductDAO {
         return result;
     }
     
-    public int updateCurrentPrice(Connection conn, int productId, int bidPrice) {
+    public int updateCurrentPrice(Connection conn, int productId, long bidPrice) {
         int result = 0;
         PreparedStatement pstmt = null;
         String sql = "	UPDATE PRODUCT\r\n SET CURRENT_PRICE = ?\r\n WHERE PRODUCT_ID = ?";
         try {
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, bidPrice);
+            pstmt.setLong(1, bidPrice);
             pstmt.setInt(2, productId);
             result = pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); } 
@@ -541,6 +557,58 @@ public class ProductDAO {
 
         return list;
     }
-
     
+    @WebServlet("/product/bid")
+    public class BidServlet extends HttpServlet {
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            request.setCharacterEncoding("UTF-8");
+            HttpSession session = request.getSession();
+            MemberDTO loginUser = (MemberDTO) session.getAttribute("loginUser");
+
+            if (loginUser == null) {
+                response.sendRedirect(request.getContextPath() + "/member/loginForm.jsp");
+                return;
+            }
+
+            int productId = Integer.parseInt(request.getParameter("productId"));
+            long bidPrice = Long.parseLong(request.getParameter("bidPrice"));
+
+            Connection conn = getConnection();
+            ProductDAO dao = new ProductDAO();
+            int currentPrice = dao.selectProductById(conn, productId).getCurrentPrice();
+
+            if (bidPrice <= currentPrice) {
+                session.setAttribute("alertMsg", "입찰가는 현재가보다 높아야 합니다.");
+                close(conn);
+                response.sendRedirect(request.getContextPath() + "/product/productDetail.jsp?productId=" + productId);
+                return;
+            }
+
+            int result = dao.updateCurrentPrice(conn, productId, bidPrice);
+
+
+            if (result > 0) {
+                commit(conn);
+                session.setAttribute("alertMsg", "입찰 성공!");
+            } else {
+                rollback(conn);
+                session.setAttribute("alertMsg", "입찰 실패");
+            }
+
+            close(conn);
+            response.sendRedirect(request.getContextPath() + "/product/productDetail.jsp?productId=" + productId);
+        }
+    }
+    public int reduceMileage(Connection conn, String memberId, long amount) {
+        String sql = "UPDATE USERS SET MILEAGE = MILEAGE - ? WHERE MEMBER_ID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, amount);
+            pstmt.setString(2, memberId);
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }

@@ -108,7 +108,10 @@ public class AdminDAO {
                 long amount = rs.getLong("AMOUNT");
 
                 // 2. 마일리지 업데이트
-                String sql2 = "UPDATE MEMBER SET MILEAGE = MILEAGE + ? WHERE MEMBER_ID = ?";
+                // Mileage information resides in the USERS table. Using the
+                // legacy MEMBER table name results in failures when this
+                // method is invoked.
+                String sql2 = "UPDATE USERS SET MILEAGE = MILEAGE + ? WHERE MEMBER_ID = ?";
                 pstmt2 = conn.prepareStatement(sql2);
                 pstmt2.setLong(1, amount);
                 pstmt2.setString(2, memberId);
@@ -133,6 +136,8 @@ public class AdminDAO {
 
         return result;
     }
+    
+    
     public List<ChargeRequestDTO> getAllChargeRequests(Connection conn) {
         List<ChargeRequestDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM CHARGE_REQUEST ORDER BY REQUEST_DATE DESC";

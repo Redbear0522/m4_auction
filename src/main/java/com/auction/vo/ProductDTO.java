@@ -11,10 +11,7 @@ public class ProductDTO {
     private String artistName;
     private String productDesc;
     private int startPrice;
-    
-    // ======== 새로 추가된 필드 ========
     private int buyNowPrice; // 즉시 구매가
-    
     private int currentPrice;
     private Timestamp endTime;
     private String imageOriginalName;
@@ -37,8 +34,6 @@ public class ProductDTO {
 
 	public ProductDTO() {}
     
-	// --- Getters and Setters ---
-    
     public int getProductId() { return productId; }
     public void setProductId(int productId) { this.productId = productId; }
     public String getProductName() { return productName; }
@@ -49,11 +44,8 @@ public class ProductDTO {
     public void setProductDesc(String productDesc) { this.productDesc = productDesc; }
     public int getStartPrice() { return startPrice; }
     public void setStartPrice(int startPrice) { this.startPrice = startPrice; }
-    
-    // ======== 새로 추가된 Getter/Setter ========
     public int getBuyNowPrice() { return buyNowPrice; }
     public void setBuyNowPrice(int buyNowPrice) { this.buyNowPrice = buyNowPrice; }
-
     public int getCurrentPrice() { return currentPrice; }
     public void setCurrentPrice(int currentPrice) { this.currentPrice = currentPrice; }
     public Timestamp getEndTime() { return endTime; }
