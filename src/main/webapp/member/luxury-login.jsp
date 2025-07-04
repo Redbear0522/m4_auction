@@ -83,7 +83,7 @@
                 </div>
                 
                 <div class="signup-link">
-                    아직 회원이 아니신가요?<a href="<%=ctx%>/views/register.jsp">회원가입</a>
+                    아직 회원이 아니신가요?<a href="<%=ctx%>/member/enroll_step1.jsp">회원가입</a>
                 </div>
             </div>
         </div>

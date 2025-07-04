@@ -17,11 +17,11 @@
                         <i class="fas fa-user"></i> <%= sid %>님
                     </a>
                     <span class="divider">|</span>
-                    <a href="<%=ctx%>/views/luxury-login.jsp">로그아웃</a>
+                    <a href="<%=ctx%>/memeber/logout.jsp">로그아웃</a>
                 <% } else { %>
                     <a href="<%=ctx%>/member/luxury-login.jsp">LOGIN</a>
                     <span class="divider">|</span>
-                    <a href="<%=ctx%>/views/register.jsp">JOIN</a>
+                    <a href="<%=request.getContextPath()%>/memeber/enroll_step1.jsp">JOIN</a>
                 <% } %>
                 <span class="divider">|</span>
                 <div class="language-select">
@@ -54,9 +54,9 @@
                                     <div class="menu-column">
                                         <h4>경매 일정</h4>
                                         <ul>
-                                            <li><a href="#">이번 달 경매</a></li>
-                                            <li><a href="#">예정 경매</a></li>
-                                            <li><a href="#">지난 경매</a></li>
+                                            <li><a href="/auction/auction.jsp">이번 달 경매</a></li>
+                                            <li><a href="/auction/auction.jsp">예정 경매</a></li>
+                                            <li><a href="/auction/auction.jsp">지난 경매</a></li>
                                         </ul>
                                     </div>
                                     <div class="menu-column">

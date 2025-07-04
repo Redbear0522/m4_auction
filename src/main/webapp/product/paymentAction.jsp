@@ -8,6 +8,8 @@
 <%@ page import="com.auction.vo.MemberDTO" %>
 <%@ page import="com.auction.vo.ProductDTO" %>
 <%@ page import="com.auction.dao.MemberDAO" %>
+<%@ page import="com.auction.dao.TransactionLogDAO" %>
+<%@ page import="com.auction.dao.BidDAO" %>
 <%@ page import="com.auction.dao.ProductDAO" %>
 <%@ page import="java.sql.Connection" %>
 <%@ page import="static com.auction.common.JDBCTemplate.*" %>
@@ -26,6 +28,7 @@
     
     Connection conn = getConnection();
     ProductDAO pDao = new ProductDAO();
+    BidDAO     bDao = new BidDAO();          // ← 여기 추가
     ProductDTO p = pDao.selectProductById(conn, productId);
 
     // 3. 결제할 금액 결정 (일반 낙찰 or 즉시 구매)
@@ -63,18 +66,39 @@
     if(!p.getStatus().equals("E")){
         result3 = pDao.updateProductWinner(conn, productId, winnerId, finalPrice);
     }
-
+	
+    	
     if(result1 > 0 && result2 > 0 && result3 > 0) {
         commit(conn);
+        loginUser.setMileage(loginUser.getMileage() - finalPrice);
+        session.setAttribute("alertMsg", "결제가 완료되었습니다. 감사합니다.");
+        
+    } else {
+        rollback(conn);
+        session.setAttribute("alertMsg", "결제 처리 중 오류가 발생했습니다.");
+    }
+    new TransactionLogDAO()
+    .insertLog(conn,
+               loginUser.getMemberId(),
+               "C",            // 낙찰(즉시구매)
+               finalPrice,
+               productId);
+ // --- 즉시 구매인 경우, BID 테이블에도 낙찰 처리 기록 삽입 ---
+    int result4 = 1;
+    // p.getStatus()가 'E'(경매종료 후 낙찰) 가 아니라면 즉시 구매 루트
+    if (!"E".equals(p.getStatus())) {
+        result4 = bDao.insertSuccessfulBid(conn, loginUser.getMemberId(), productId, finalPrice);
+    }
+    if (result1 > 0 && result2 > 0 && result3 > 0 && result4 > 0) {
+        commit(conn);
+        // 세션 마일리지 값도 갱신
         loginUser.setMileage(loginUser.getMileage() - finalPrice);
         session.setAttribute("alertMsg", "결제가 완료되었습니다. 감사합니다.");
     } else {
         rollback(conn);
         session.setAttribute("alertMsg", "결제 처리 중 오류가 발생했습니다.");
     }
-    
-    // ======== 수정된 부분! ========
-    // 6. 모든 처리가 끝나면 메인 페이지로 돌아갑니다.
+
     close(conn);
     response.sendRedirect(request.getContextPath() + "/index.jsp");
 %>

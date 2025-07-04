@@ -13,7 +13,13 @@
 <%@ page import="static com.auction.common.JDBCTemplate.*" %>
 <%
     MemberDTO loginUser = (MemberDTO)session.getAttribute("loginUser");
-
+	
+	if (loginUser == null) {
+	    // 로그인 안 된 사용자는 여기서 돌려보낸다
+	    response.sendRedirect(request.getContextPath() + "/member/loginForm.jsp");
+	    return;
+	}
+	
     String productIdStr = request.getParameter("productId");
     int productId = 0;
     if(productIdStr != null) {
@@ -162,27 +168,52 @@
         </div>
     <% } else { %>
         <h1 style="text-align:center; margin-top:100px;">해당 상품을 찾을 수 없습니다.</h1>
-    <% } %>
+    <% } 
+    
+        // 상품 정보 조회 직후
+    java.util.Date now = new java.util.Date();
+    if (p != null && "A".equals(p.getStatus()) && now.after(p.getEndTime())) {
+        Connection conn = getConnection();
+        response.sendRedirect("processWinnerAction.jsp?productId=" + productId);
+        close(conn);
+        return;
+    }
+    %>
+    
     <footer class="footer">
         <p>&copy; 2025 Art Auction. All Rights Reserved.</p>
     </footer>
-    <script>
-        function validateBid() { 
-            const bidPrice = parseInt(document.getElementById('bidPriceInput').value);
-            const currentPrice = <%= currentPrice %>;
+ <script>
+    const userMileage = <%= loginUser.getMileage() %>;
+    const currentPrice = <%= currentPrice %>;
+    const buyNowPrice = <%= p.getBuyNowPrice() %>;
 
-            if (isNaN(bidPrice) || bidPrice <= 0) {
-                alert("올바른 입찰 금액을 입력해주세요.");
-                return false;
-            }
-            
-            if (bidPrice <= currentPrice) {
-                alert("입찰가는 현재가보다 높아야 합니다.");
-                return false;
-            }
+    function validateBid() {
+        const bidPrice = parseInt(document.getElementById('bidPriceInput').value, 10);
 
-            return true;
+        if (isNaN(bidPrice) || bidPrice <= 0) {
+            alert("올바른 입찰 금액을 입력해주세요.");
+            return false;
         }
-    </script>
+
+        if (bidPrice > userMileage) {
+            alert("보유한 마일리지가 부족합니다.");
+            return false;
+        }
+
+        if (currentPrice > 0 && bidPrice > currentPrice * 5) { 
+            alert("입찰가는 현재가의 500%를 초과할 수 없습니다.");
+            return false;
+        
+        }
+
+        if (bidPrice <= currentPrice) {
+            alert("입찰가는 현재가보다 높아야 합니다.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
 </body>
 </html>

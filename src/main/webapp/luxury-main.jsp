@@ -126,11 +126,11 @@
     <section class="quick-links">
         <div class="container">
             <div class="links-grid">
-                <a href="#" class="link-item">
+                <a href="/auction/auction.jsp" class="link-item">
                     <i class="fas fa-gavel"></i>
                     <span>Live Auction</span>
                 </a>
-                <a href="#" class="link-item">
+                <a href="/auction/auction.jsp" class="link-item">
                     <i class="fas fa-laptop"></i>
                     <span>Online Auction</span>
                 </a>
@@ -138,7 +138,7 @@
                     <i class="fas fa-calendar-alt"></i>
                     <span>Auction Schedule</span>
                 </a>
-                <a href="#" class="link-item">
+                <a href="/mypage/myPage.jsp" class="link-item">
                     <i class="fas fa-user-circle"></i>
                     <span>My Page</span>
                 </a>
