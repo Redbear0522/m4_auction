@@ -132,6 +132,4 @@ public class ScheduleDAO {
             return "진행중";
         }
     }
-
-
 }

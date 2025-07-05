@@ -517,9 +517,6 @@ public class ProductDAO {
         }
         return -1; // 실패 시 -1 반환
     }
-    
- // ProductDAO.java
-
     //최근 낙찰이 된 경매 물품 리시트 출력
     public List<ProductDTO> selectRecentWins(Connection conn) throws SQLException {
         List<ProductDTO> list = new ArrayList<>();
@@ -541,6 +538,4 @@ public class ProductDAO {
 
         return list;
     }
-
-    
 }

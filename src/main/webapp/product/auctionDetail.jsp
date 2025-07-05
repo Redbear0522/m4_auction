@@ -3,7 +3,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="com.auction.dao.AuctionDAO, com.auction.vo.AuctionDTO" %>
 
-<%-- ▼▼▼ [수정된 부분] 파라미터 값 검증 로직 추가 ▼▼▼ --%>
+<%-- ▼▼▼  파라미터 값 검증 로직 추가 ▼▼▼ --%>
 <div style="background-color:#fffde7; padding: 1px 15px; border-radius: 5px; margin-bottom:10px; border:1px solid #ffecb3;">
 <%
 	request.setCharacterEncoding("UTF-8");
@@ -46,7 +46,6 @@
 	String memberId = (String) session.getAttribute("memberId");
 %>
 </div>
-<%-- ▲▲▲ [수정된 부분] 종료 ▲▲▲ --%>
 <html>
 <head>
     <title>상품 상세 보기</title>

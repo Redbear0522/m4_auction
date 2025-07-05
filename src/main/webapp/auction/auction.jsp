@@ -7,8 +7,6 @@
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="static com.auction.common.JDBCTemplate.*" %>
 <%@ page import="com.auction.common.PageInfo" %>
-<%-- MemberDTO는 사용되지 않으므로 import 제거 --%>
-<%-- <%@ page import="com.auction.vo.MemberDTO" %> --%>
 <%@ page import="com.auction.vo.ProductDTO" %>
 <%@ page import="com.auction.vo.ScheduleDTO" %>
 <%@ page import="com.auction.dao.ProductDAO" %>

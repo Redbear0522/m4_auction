@@ -119,4 +119,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+<<<<<<< HEAD
 # End of https://www.toptal.com/developers/gitignore/api/windows,eclipse,java
+=======
+# End of https://www.toptal.com/developers/gitignore/api/windows,eclipse,java
+>>>>>>> origin/main
