@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*" %>
-<%@ page import="com.auction.vo.MemberDTO" %>
-<%@ page import="com.auction.dao.MemberDAO" %>
+<%@ page import="com.auction.dao.MemberDAO,com.auction.vo.MemberDTO" %>
 <%  
     request.setCharacterEncoding("UTF-8");
     String ctx = request.getContextPath();
@@ -24,7 +23,7 @@
     
 </head>
 <body class="login-page">
-    <jsp:include page="/layout/header/luxury-header.jsp" />
+    <jsp:include page="<%=request.getContextPath() %>/layout/header/luxury-header.jsp" />
     
     <div class="login-container">
         <div class="login-wrapper">
@@ -44,12 +43,12 @@
                 <form action="<%=ctx%>/member/loginAction.jsp" method="post">
                     <div class="form-group">
                         <label for="userid">아이디</label>
-                        <input type="text"  id="userId" name="userId" class="form-control" placeholder="아이디를 입력하세요" required>
+                        <input type="text" id="userid" name="userid" class="form-control" placeholder="아이디를 입력하세요" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="passwd">비밀번호</label>
-                        <input type="password" id="userPwd" name="userPwd" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                        <input type="password" id="passwd" name="passwd" class="form-control" placeholder="비밀번호를 입력하세요" required>
                     </div>
                     
                     <div class="form-options">
@@ -89,6 +88,6 @@
         </div>
     </div>
     
-    <jsp:include page="/layout/footer/luxury-footer.jsp" />
+    <jsp:include page="<%=request.getContextPath() %>/layout/footer/luxury-footer.jsp" />
 </body>
 </html>

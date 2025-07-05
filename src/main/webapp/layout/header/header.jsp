@@ -24,8 +24,8 @@
             <a href="<%= request.getContextPath() %>/member/logout.jsp">로그아웃</a>
             <a href="<%= request.getContextPath() %>/product/productEnrollForm.jsp">상품등록</a>
         <% } %>
-        	<a href="<%= request.getContextPath() %>/bid/bid.jsp">경매장</a>
-        	<a href="<%= request.getContextPath() %>/product/recent_bid.jsp">최근낙찰</a>
+        	<a href="<%= request.getContextPath() %>/auction/auction.jsp">경매장</a>
+        	<a href="<%= request.getContextPath() %>/auction/recent_bid.jsp">최근낙찰</a>
         	<a href="<%= request.getContextPath() %>/bid/favoriteBid.jsp">인기경매</a>
     </nav>
 </header>

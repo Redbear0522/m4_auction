@@ -11,18 +11,49 @@ public class AuctionDTO {
 	private Date regDate;		// 상품 등록일 (sysdate로 자동 설정이됨)
 	private String description; // 경매 상품 상세 설명
 	
-	public int getId() {		return id;	}
-	public void setId(int id) {		this.id = id;	}
-	public String getTitle() {		return title;	}
-	public void setTitle(String title) {		this.title = title;	}
-	public int getStartPrice() {		return startPrice;	}
-	public void setStartPrice(int startPrice) {		this.startPrice = startPrice;	}
-	public int getCurrentPrice() {		return currentPrice;	}
-	public void setCurrentPrice(int currentPrice) {		this.currentPrice = currentPrice;	}
-	public String getStatus() {		return status;	}
-	public void setStatus(String status) {		this.status = status;	}
-	public Date getRegDate() {		return regDate;	}
-	public void setRegDate(Date regDate) {		this.regDate = regDate;	}
-	public String getDescription() {		return description;	}
-	public void setDescription(String description) {		this.description = description;	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public int getStartPrice() {
+		return startPrice;
+	}
+	public void setStartPrice(int startPrice) {
+		this.startPrice = startPrice;
+	}
+	public int getCurrentPrice() {
+		return currentPrice;
+	}
+	public void setCurrentPrice(int currentPrice) {
+		this.currentPrice = currentPrice;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public Date getRegDate() {
+		return regDate;
+	}
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
+	
 }

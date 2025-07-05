@@ -58,7 +58,7 @@
                             </div>
                             <div class="hero-actions">
                                 <a href="#" class="btn btn-primary">도록 보기</a>
-                                <a href="#" class="btn btn-outline">라이브 경매 참여</a>
+                                <a href="<%= request.getContextPath() %>/auction/auction.jsp" class="btn btn-outline">라이브 경매 참여</a>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                             </div>
                             <div class="hero-actions">
                                 <a href="#" class="btn btn-primary">도록 보기</a>
-                                <a href="#" class="btn btn-outline">온라인 응찰</a>
+                                <a href="<%=request.getContextPath() %>/auction/auction.jsp>" class="btn btn-outline">온라인 응찰</a>
                             </div>
                         </div>
                     </div>
@@ -126,11 +126,11 @@
     <section class="quick-links">
         <div class="container">
             <div class="links-grid">
-                <a href="#" class="link-item">
-                    <i class="fas fa-gavel"></i>
-                    <span>Live Auction</span>
-                </a>
-                <a href="#" class="link-item">
+                <a href="<%= request.getContextPath() %>/auction/auction.jsp" class="link-item">
+				    <i class="fas fa-gavel"></i>
+				    <span>Live Auction</span>
+				</a>
+                <a href="/auction/auction.jsp" class="link-item">
                     <i class="fas fa-laptop"></i>
                     <span>Online Auction</span>
                 </a>
@@ -138,7 +138,7 @@
                     <i class="fas fa-calendar-alt"></i>
                     <span>Auction Schedule</span>
                 </a>
-                <a href="#" class="link-item">
+                <a href="/mypage/myPage.jsp" class="link-item">
                     <i class="fas fa-user-circle"></i>
                     <span>My Page</span>
                 </a>

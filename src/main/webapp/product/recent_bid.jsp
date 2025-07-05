@@ -49,6 +49,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/layout/header/header.jsp" />
     <div class="container">
         <div class="title">📦 최근 낙찰된 상품 목록</div>
         <%

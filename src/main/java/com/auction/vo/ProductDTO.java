@@ -23,12 +23,17 @@ public class ProductDTO {
     private String winnerId;
     private int finalPrice;
     private ScheduleDTO schedule;
-	
+
+    public ScheduleDTO getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(ScheduleDTO schedule) {
+		this.schedule = schedule;
+	}
+
+	public ProductDTO() {}
     
-    public ProductDTO() {}
-    
-    public ScheduleDTO getSchedule() {return schedule;}
-	public void setSchedule(ScheduleDTO schedule) {this.schedule = schedule;}
     public int getProductId() { return productId; }
     public void setProductId(int productId) { this.productId = productId; }
     public String getProductName() { return productName; }

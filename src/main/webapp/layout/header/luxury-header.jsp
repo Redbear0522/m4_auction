@@ -1,4 +1,53 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.text.SimpleDateFormat, java.text.DecimalFormat" %>
+<%@ page import="java.util.List, java.util.Date" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="static com.auction.common.JDBCTemplate.*" %>
+<%@ page import="com.auction.common.PageInfo" %>
+<%@ page import="com.auction.vo.ProductDTO, com.auction.vo.ScheduleDTO" %>
+<%@ page import="com.auction.dao.ProductDAO, com.auction.dao.ScheduleDAO" %>
+<%
+    // 파라미터
+    String keyword  = request.getParameter("keyword");
+    String category = request.getParameter("category");
+    if (keyword  == null) keyword  = "";
+    if (category == null) category = "all";
+
+    // 페이징 설정
+    int currentPage = 1, pageLimit = 5, boardLimit = 8, listCount;
+    if (!keyword.isEmpty()) {
+        listCount = new ProductDAO().searchProductCount(getConnection(), keyword);
+    } else if (!"all".equals(category)) {
+        listCount = new ProductDAO().selectProductCountByCategory(getConnection(), category);
+    } else {
+        listCount = new ProductDAO().selectProductCount(getConnection());
+    }
+    if (request.getParameter("page") != null) {
+        currentPage = Integer.parseInt(request.getParameter("page"));
+    }
+    PageInfo pi = new PageInfo(listCount, currentPage, pageLimit, boardLimit);
+
+    // DAO 호출
+    Connection conn = getConnection();
+    List<ProductDTO> productList;
+    if (!keyword.isEmpty()) {
+        productList = new ProductDAO().searchProductList(conn, keyword, pi);
+    } else if (!"all".equals(category)) {
+        productList = new ProductDAO().selectProductListByCategory(conn, category, pi);
+    } else {
+        productList = new ProductDAO().selectProductList(conn, pi);
+    }
+    List<ScheduleDTO> scheduleList = new ScheduleDAO().selectAllSchedules(conn);
+    close(conn);
+
+    // 포맷터
+    SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd HH:mm");
+    DecimalFormat df      = new DecimalFormat("###,###,###");
+    Date now              = new Date();
+%>
+
 <%
     String sid = (String) session.getAttribute("sid");
     String ctx = request.getContextPath();
@@ -17,11 +66,11 @@
                         <i class="fas fa-user"></i> <%= sid %>님
                     </a>
                     <span class="divider">|</span>
-                    <a href="<%=ctx%>/views/luxury-login.jsp">로그아웃</a>
+                    <a href="<%=ctx%>/memeber/logout.jsp">로그아웃</a>
                 <% } else { %>
                     <a href="<%=ctx%>/member/luxury-login.jsp">LOGIN</a>
                     <span class="divider">|</span>
-                    <a href="<%=ctx%>/views/register.jsp">JOIN</a>
+                    <a href="<%=request.getContextPath()%>/memeber/enroll_step1.jsp">JOIN</a>
                 <% } %>
                 <span class="divider">|</span>
                 <div class="language-select">
@@ -54,9 +103,9 @@
                                     <div class="menu-column">
                                         <h4>경매 일정</h4>
                                         <ul>
-                                            <li><a href="#">이번 달 경매</a></li>
-                                            <li><a href="#">예정 경매</a></li>
-                                            <li><a href="#">지난 경매</a></li>
+                                            <li><a href="<%=request.getContextPath() %>/auction/auction.jsp">이번 달 경매</a></li>
+                                            <li><a href="<%=request.getContextPath() %>/auction/auction.jsp">예정 경매</a></li>
+                                            <li><a href="<%=request.getContextPath() %>/auction/auction.jsp">지난 경매</a></li>
                                         </ul>
                                     </div>
                                     <div class="menu-column">
@@ -153,8 +202,8 @@
     <!-- Search Bar (Hidden by default) -->
     <div class="search-bar">
         <div class="container">
-            <form class="search-form" action="<%=ctx%>/search.jsp" method="get">
-                <input type="text" name="keyword" placeholder="작가명, 작품명, 경매번호를 입력하세요" autocomplete="off">
+            <form class="search-form" action="<%=ctx%>/auction/auction.jsp" method="get">
+                <input type="text" name="keyword" placeholder="작가명, 작품명을 입력하세요" autocomplete="off">
                 <button type="submit"><i class="fas fa-search"></i></button>
                 <button type="button" class="search-close"><i class="fas fa-times"></i></button>
             </form>

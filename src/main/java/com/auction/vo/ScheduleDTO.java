@@ -1,12 +1,13 @@
 package com.auction.vo;
 
 import java.util.Date;
+import java.sql.Timestamp;
 
 public class ScheduleDTO {
     private int scheduleId;    // 스케줄 고유번호 (PK)
     private int productId;     // 상품 ID (FK)
-    private Date startTime;    // 경매 시작 시간
-    private Date endTime;      // 경매 종료 시간
+    private Timestamp startTime;    // 경매 시작 시간
+    private Timestamp endTime;      // 경매 종료 시간
     private String status;     // 상태 ('대기', '진행중', '종료')
     private Date createdAt;    // 등록일
     private Date updatedAt;    // 수정일
@@ -26,16 +27,16 @@ public class ScheduleDTO {
     public void setProductId(int productId) {
         this.productId = productId;
     }
-    public Date getStartTime() {
+    public Timestamp getStartTime() {
         return startTime;
     }
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Timestamp startTime) {
         this.startTime = startTime;
     }
-    public Date getEndTime() {
+    public Timestamp getEndTime() {
         return endTime;
     }
-    public void setEndTime(Date endTime) {
+    public void setEndTime(Timestamp endTime) {
         this.endTime = endTime;
     }
     public String getStatus() {

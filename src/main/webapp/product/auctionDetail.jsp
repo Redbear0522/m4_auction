@@ -3,7 +3,6 @@
     pageEncoding="UTF-8"%>
 <%@ page import="com.auction.dao.AuctionDAO, com.auction.vo.AuctionDTO" %>
 
-<%-- ▼▼▼  파라미터 값 검증 로직 추가 ▼▼▼ --%>
 <div style="background-color:#fffde7; padding: 1px 15px; border-radius: 5px; margin-bottom:10px; border:1px solid #ffecb3;">
 <%
 	request.setCharacterEncoding("UTF-8");

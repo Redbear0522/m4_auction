@@ -45,7 +45,7 @@
 </head>
 <body>
     <!-- Header -->
-    <jsp:include page="/views/luxury-header.jsp" />
+    <jsp:include page="<%=request.getContextPath() %>/layout/header/luxury-header.jsp" />
     
     <!-- Main Hero Section -->
     <section class="main-hero">
@@ -547,7 +547,7 @@
     </section>
     
     <!-- Footer -->
-    <jsp:include page="/views/luxury-footer.jsp" />
+    <jsp:include page="<%=request.getContextPath() %>/layout/footer/luxury-footer.jsp" />
     
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
