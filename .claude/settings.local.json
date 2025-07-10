@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(echo:*)",
+      "Bash(BACKUP_DIR=\"/mnt/c/dev/web/acu/backup_$(date +%Y%m%d_%H%M)\")"
+    ],
+    "deny": []
+  }
+}
