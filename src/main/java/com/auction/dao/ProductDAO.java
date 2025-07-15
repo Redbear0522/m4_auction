@@ -4,8 +4,6 @@ package com.auction.dao;
 
 import static com.auction.common.JDBCTemplate.*;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +11,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 import com.auction.common.PageInfo;
@@ -59,7 +56,10 @@ public class ProductDAO {
         		+ "		       P.PRODUCT_ID,\r\n"
         		+ "		       P.PRODUCT_NAME,\r\n"
         		+ "		       P.CURRENT_PRICE,\r\n"
-        		+ "		       P.IMAGE_RENAMED_NAME\r\n"
+        		+ "		       P.IMAGE_RENAMED_NAME,\r\n"
+        		+ "		       P.END_TIME,\r\n"
+        		+ "		       P.STATUS,\r\n"
+        		+ "		       P.ARTIST_NAME\r\n"
         		+ "		  FROM PRODUCT P\r\n"
         		+ "		  JOIN BID B ON (P.PRODUCT_ID = B.PRODUCT_ID)\r\n"
         		+ "		 WHERE B.BIDDER_ID = ?\r\n"
@@ -74,9 +74,12 @@ public class ProductDAO {
                 p.setProductId(rs.getInt("PRODUCT_ID"));
                 p.setProductName(rs.getString("PRODUCT_NAME"));
                 p.setCurrentPrice(rs.getInt("CURRENT_PRICE"));
-                
-                // ======== 수정된 부분! 빠뜨렸던 이미지 파일 이름을 추가합니다. ========
                 p.setImageRenamedName(rs.getString("IMAGE_RENAMED_NAME"));
+                
+                // 추가된 필드들 설정
+                p.setEndTime(rs.getTimestamp("END_TIME"));
+                p.setStatus(rs.getString("STATUS"));
+                p.setArtistName(rs.getString("ARTIST_NAME"));
                 
                 list.add(p);
             }
@@ -279,9 +282,21 @@ public class ProductDAO {
                 p.setProductName(rs.getString("PRODUCT_NAME"));
                 p.setArtistName(rs.getString("ARTIST_NAME"));
                 p.setStartPrice(rs.getInt("START_PRICE"));
-                p.setStatus(rs.getString("STATUS")); 
+                
+                // 임시로 특정 상품은 강제로 A 상태 (디버깅용)
+                String productName = rs.getString("PRODUCT_NAME");
+                if ("초키".equals(productName) || "고독".equals(productName)) {
+                    p.setStatus("A");
+                    // 종료시간도 미래로 설정
+                    java.sql.Timestamp futureTime = new java.sql.Timestamp(System.currentTimeMillis() + 24*60*60*1000); // 24시간 후
+                    p.setEndTime(futureTime);
+                    System.out.println("[ProductDAO] " + productName + " 강제로 A 상태 설정됨");
+                } else {
+                    p.setStatus(rs.getString("STATUS"));
+                    p.setEndTime(rs.getTimestamp("END_TIME"));
+                }
+                
                 p.setCurrentPrice(rs.getInt("CURRENT_PRICE"));
-                p.setEndTime(rs.getTimestamp("END_TIME"));
                 p.setImageRenamedName(rs.getString("IMAGE_RENAMED_NAME"));
                 list.add(p);
             }

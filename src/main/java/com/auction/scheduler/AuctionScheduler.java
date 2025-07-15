@@ -101,53 +101,64 @@ public class AuctionScheduler implements ServletContextListener {
                     
                     // 3. 낙찰자가 있는 경우 처리
                     if (finalBidder != null) {
-                        // 3-1. 낙찰자 마일리지 차감 확인
-                        String checkSql = "SELECT MILEAGE FROM USERS WHERE MEMBER_ID = ?";
-                        PreparedStatement checkPstmt = conn.prepareStatement(checkSql);
-                        checkPstmt.setString(1, finalBidder);
-                        ResultSet checkRs = checkPstmt.executeQuery();
+                        // 3-1. 낙찰자는 이미 입찰시 마일리지가 차감되었으므로 추가 차감 없음
+                        // 3-2. 판매자에게 마일리지 지급 (수수료 5% 제외)
+                        long sellerAmount = (long)(finalPrice * 0.95);
+                        String addSql = "UPDATE USERS SET MILEAGE = MILEAGE + ? WHERE MEMBER_ID = ?";
+                        PreparedStatement addPstmt = conn.prepareStatement(addSql);
+                        addPstmt.setLong(1, sellerAmount);
+                        addPstmt.setString(2, sellerId);
+                        addPstmt.executeUpdate();
+                        addPstmt.close();
                         
-                        long bidderMileage = 0;
-                        if (checkRs.next()) {
-                            bidderMileage = checkRs.getLong("MILEAGE");
-                        }
-                        checkRs.close();
-                        checkPstmt.close();
+                        // 3-3. 낙찰 성공 상태로 BID 업데이트
+                        String updateBidSql = "UPDATE BID SET IS_SUCCESSFUL = 1, END_TIME = SYSDATE WHERE PRODUCT_ID = ? AND BIDDER_ID = ? AND BID_PRICE = ?";
+                        PreparedStatement updateBidPstmt = conn.prepareStatement(updateBidSql);
+                        updateBidPstmt.setInt(1, productId);
+                        updateBidPstmt.setString(2, finalBidder);
+                        updateBidPstmt.setLong(3, finalPrice);
+                        updateBidPstmt.executeUpdate();
+                        updateBidPstmt.close();
                         
-                        if (bidderMileage >= finalPrice) {
-                            // 3-2. 낙찰자 마일리지 차감
-                            String deductSql = "UPDATE USERS SET MILEAGE = MILEAGE - ? WHERE MEMBER_ID = ?";
-                            PreparedStatement deductPstmt = conn.prepareStatement(deductSql);
-                            deductPstmt.setLong(1, finalPrice);
-                            deductPstmt.setString(2, finalBidder);
-                            deductPstmt.executeUpdate();
-                            deductPstmt.close();
+                        // 3-4. 거래 로그 기록 (판매자 수익만 기록, 낙찰자는 이미 입찰시 기록됨)
+                        TransactionLogDAO logDao = new TransactionLogDAO();
+                        logDao.insertLog(conn, sellerId, "S", sellerAmount, productId);
+                        
+                        System.out.println("[경매종료] " + productName + " - 낙찰자: " + finalBidder + ", 금액: " + finalPrice + ", 판매자 수령: " + sellerAmount + " (낙찰자 마일리지는 입찰시 이미 차감됨)");
+                        
+                        // 3-5. 혹시라도 다른 대기중인 입찰들이 있다면 환불 처리
+                        String refundOthersSql = "SELECT BIDDER_ID, BID_PRICE FROM BID WHERE PRODUCT_ID = ? AND IS_SUCCESSFUL = 0 AND BIDDER_ID != ?";
+                        PreparedStatement refundPstmt = conn.prepareStatement(refundOthersSql);
+                        refundPstmt.setInt(1, productId);
+                        refundPstmt.setString(2, finalBidder);
+                        ResultSet refundRs = refundPstmt.executeQuery();
+                        
+                        while (refundRs.next()) {
+                            String otherBidder = refundRs.getString("BIDDER_ID");
+                            int otherBidPrice = refundRs.getInt("BID_PRICE");
                             
-                            // 3-3. 판매자에게 마일리지 지급 (수수료 5% 제외)
-                            long sellerAmount = (long)(finalPrice * 0.95);
-                            String addSql = "UPDATE USERS SET MILEAGE = MILEAGE + ? WHERE MEMBER_ID = ?";
-                            PreparedStatement addPstmt = conn.prepareStatement(addSql);
-                            addPstmt.setLong(1, sellerAmount);
-                            addPstmt.setString(2, sellerId);
-                            addPstmt.executeUpdate();
-                            addPstmt.close();
+                            // 마일리지 환불
+                            String refundSql = "UPDATE USERS SET MILEAGE = MILEAGE + ? WHERE MEMBER_ID = ?";
+                            PreparedStatement refundUserPstmt = conn.prepareStatement(refundSql);
+                            refundUserPstmt.setInt(1, otherBidPrice);
+                            refundUserPstmt.setString(2, otherBidder);
+                            refundUserPstmt.executeUpdate();
+                            refundUserPstmt.close();
                             
-                            // 3-4. 거래 로그 기록
-                            TransactionLogDAO logDao = new TransactionLogDAO();
-                            logDao.insertLog(conn, finalBidder, "W", -finalPrice, productId);
-                            logDao.insertLog(conn, sellerId, "S", sellerAmount, productId);
+                            // 환불 로그 기록
+                            logDao.insertLog(conn, otherBidder, "R", otherBidPrice, productId);
                             
-                            System.out.println("[경매종료] " + productName + " - 낙찰자: " + finalBidder + ", 금액: " + finalPrice + ", 판매자 수령: " + sellerAmount);
-                        } else {
-                            // 마일리지 부족으로 유찰
-                            System.out.println("[경매종료] " + productName + " - 낙찰자 마일리지 부족으로 유찰 (보유: " + bidderMileage + ", 필요: " + finalPrice + ")");
-                            
-                            String failSql = "UPDATE PRODUCT SET STATUS = 'F', WINNER_ID = NULL WHERE PRODUCT_ID = ?";
-                            PreparedStatement failPstmt = conn.prepareStatement(failSql);
-                            failPstmt.setInt(1, productId);
-                            failPstmt.executeUpdate();
-                            failPstmt.close();
+                            System.out.println("[경매종료] " + otherBidder + "에게 " + otherBidPrice + "P 환불 (패찰)");
                         }
+                        refundRs.close();
+                        refundPstmt.close();
+                        
+                        // 3-6. 나머지 입찰들을 환불 완료 상태로 변경
+                        String updateOtherBidsSql = "UPDATE BID SET IS_SUCCESSFUL = 2 WHERE PRODUCT_ID = ? AND IS_SUCCESSFUL = 0";
+                        PreparedStatement updateOthersPstmt = conn.prepareStatement(updateOtherBidsSql);
+                        updateOthersPstmt.setInt(1, productId);
+                        updateOthersPstmt.executeUpdate();
+                        updateOthersPstmt.close();
                     } else {
                         // 입찰자가 없어서 유찰
                         System.out.println("[경매종료] " + productName + " - 입찰자 없음으로 유찰");

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.auction.dto.MemberDTO, com.auction.dto.ProductDTO,
-                 com.auction.dao.ProductDAO,
+                 com.auction.dao.ProductDAO,com.auction.dao.WishlistDAO,
                  java.sql.Connection,
                  java.text.SimpleDateFormat,
                  java.text.DecimalFormat,
@@ -15,8 +15,15 @@
 
     // productId 파싱 및 DTO 조회
     int productId = 0;
-    if (request.getParameter("productId") != null)
-        productId = Integer.parseInt(request.getParameter("productId"));
+	String productIdStr = request.getParameter("productId");
+	if (productIdStr != null && !productIdStr.trim().isEmpty()) {
+	    try {
+	        productId = Integer.parseInt(productIdStr.trim());
+	    } catch(NumberFormatException e) {
+	        productId = 0;
+	    }
+	}
+
 
     ProductDTO p = null;
     if (productId > 0) {
@@ -25,8 +32,10 @@
         close(conn);
     }
 
-    // 상태 플래그
-    boolean isEnded = p != null && "E".equals(p.getStatus());
+    // 상태 플래그 (시간 기반 종료 체크 추가)
+    java.util.Date now = new java.util.Date();
+    boolean isTimeEnded = p != null && p.getEndTime() != null && now.after(p.getEndTime());
+    boolean isEnded = p != null && ("E".equals(p.getStatus()) || isTimeEnded);
     boolean isSeller = p != null && loginUser.getMemberId().equals(p.getSellerId());
     boolean isWinner = p != null && p.getWinnerId() != null && loginUser.getMemberId().equals(p.getWinnerId());
     
@@ -640,10 +649,19 @@
                             <i class="fas fa-share"></i>
                             공유하기
                         </a>
-                        <a href="#" class="action-link wishlist-btn" data-product-id="<%=productId%>" title="관심상품 추가">
-                            <i class="far fa-heart"></i>
-                            관심상품
-                        </a>
+						<%
+						    boolean isWishlisted = false;
+						    if (loginUser != null && p != null) {
+						        Connection conn = getConnection();
+						        isWishlisted = new WishlistDAO().isWishlisted(conn, loginUser.getMemberId(), p.getProductId());
+						        close(conn);
+						    }
+						%>
+						<a href="javascript:void(0);" class="action-link wishlist-btn" data-product-id="<%=productId%>" data-action="<%=isWishlisted ? "remove" : "add"%>"
+						   title="<%=isWishlisted ? "찜 취소" : "관심상품 추가"%>">
+						   <i class="<%=isWishlisted ? "fas" : "far"%> fa-heart" style="<%=isWishlisted ? "color:#e74c3c" : ""%>"></i>
+						   <%=isWishlisted ? "찜 취소" : "관심상품"%>
+						</a>
                     </div>
                 </div>
             </div>
@@ -728,9 +746,6 @@
                 form.submit();
             }
         }
-        
-        // 실시간 타이머 제거됨 - 정적 마감일시로 변경
-        
         // 페이지 공유
         function sharePage() {
             if (navigator.share) {
@@ -746,21 +761,39 @@
                 });
             }
         }
-        
-        // 관심상품 기능은 wishlist.js에서 처리됩니다
-        
-        // 타이머 제거됨 - 정적 마감일시 사용
-        
-        // 이미지 로드 실패시 대체 이미지로 변경
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                img.onerror = function() {
-                    // 상품 상세페이지용 고품질 placeholder
-                    this.src = 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=800';
-                    this.onerror = null;
-                };
-            });
+        document.addEventListener("DOMContentLoaded", function() {
+            const wishBtn = document.querySelector('.wishlist-btn');
+            if (wishBtn) {
+                wishBtn.addEventListener('click', function() {
+                    // 현재 상태에 따라 action 분기
+                    const productId = this.getAttribute('data-product-id');
+                    const action = this.getAttribute('data-action'); // 'add' or 'remove'
+                    fetch('<%=ctx%>/wishlistAction.jsp', { // '/product' 경로 제거
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `productId=${productId}&action=${action}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // 상태 변경 및 버튼 UI 갱신
+                            if (data.isWishlisted) {
+                                wishBtn.setAttribute('data-action', 'remove');
+                                wishBtn.innerHTML = '<i class="fas fa-heart" style="color:#e74c3c"></i> 찜 취소';
+                            } else {
+                                wishBtn.setAttribute('data-action', 'add');
+                                wishBtn.innerHTML = '<i class="far fa-heart"></i> 관심상품';
+                            }
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(err => {
+                        alert('서버 오류가 발생했습니다.');
+                    });
+                });
+            }
         });
     </script>
 </body>

@@ -93,16 +93,23 @@
             return;
         }
         
-        // 7. 입찰 처리 (BidDAO의 placeBid 메서드 사용)
+        // 7. 입찰 처리 및 즉시 마일리지 차감
         BidDAO bidDao = new BidDAO();
-        boolean bidSuccess = bidDao.placeBid(conn, memberId, productId, bidPrice);
+        boolean bidSuccess = bidDao.placeBidWithMileageDeduction(conn, memberId, productId, bidPrice);
         
         if (bidSuccess) {
-            // 8. 입찰 성공 (마일리지는 경매 종료 시에 차감)
+            // 8. 입찰 성공 - 마일리지 즉시 차감 완료
             commit(conn);
-            session.setAttribute("alertMsg", "입찰 성공! 입찰가: " + String.format("%,d", bidPrice) + "원 (경매 종료 시 마일리지 차감)");
             
-            System.out.println("[입찰성공] 사용자: " + memberId + ", 상품: " + productId + ", 금액: " + bidPrice);
+            // 9. 세션의 마일리지 정보 업데이트 (간단한 계산 방식)
+            long newMileage = loginUser.getMileage() - bidPrice;
+            loginUser.setMileage(newMileage);
+            session.setAttribute("loginUser", loginUser);
+            System.out.println("[마일리지 업데이트] 계산된 현재 마일리지: " + newMileage + "P");
+            
+            session.setAttribute("alertMsg", "입찰 성공! 입찰가: " + String.format("%,d", bidPrice) + "원 (마일리지 " + String.format("%,d", bidPrice) + "P 차감됨)");
+            
+            System.out.println("[입찰성공] 사용자: " + memberId + ", 상품: " + productId + ", 금액: " + bidPrice + " (마일리지 즉시 차감, 세션 업데이트)");
         } else {
             rollback(conn);
             session.setAttribute("alertMsg", "입찰 처리 중 오류가 발생했습니다.");

@@ -66,6 +66,8 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<%=ctx%>/resources/css/luxury-global-style.css">
+    <link rel="stylesheet" href="<%=ctx%>/resources/css/common-utilities.css">
+    <link rel="stylesheet" href="<%=ctx%>/resources/css/index-page.css">
 </head>
 <body>
     <!-- Header -->
@@ -77,7 +79,7 @@
             <div class="swiper-wrapper">
                 <!-- Slide 1 -->
                 <div class="swiper-slide">
-                    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=2000');">
+                    <div class="hero-slide idx-hero-slide-1">
                         <div class="hero-overlay"></div>
                         <div class="hero-content">
                             <span class="hero-category">JULY ONLINE AUCTION</span>
@@ -96,7 +98,7 @@
                             <div class="hero-actions">
                                 <a href="<%=ctx%>/auction/auctionList.jsp" class="btn btn-primary">도록 보기</a>
                                 <% if (isLoggedIn) { %>
-                                    <a href="<%= request.getContextPath() %>/auction/auction.jsp" class="btn btn-outline">라이브 경매 참여</a>
+                                    <a href="<%= request.getContextPath() %>/auction/auction.jsp" class="btn btn-outline">경매 참여</a>
                                 <% } else { %>
                                     <a href="<%=ctx%>/member/loginForm.jsp" class="btn btn-outline">로그인 후 참여</a>
                                 <% } %>
@@ -107,7 +109,7 @@
                 
                 <!-- Slide 2 -->
                 <div class="swiper-slide">
-                    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=2000');">
+                    <div class="hero-slide idx-hero-slide-2">
                         <div class="hero-overlay"></div>
                         <div class="hero-content">
                             <span class="hero-category">PREMIUM COLLECTION</span>
@@ -137,7 +139,7 @@
                 
                 <!-- Slide 3 -->
                 <div class="swiper-slide">
-                    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1561214115-f2f134cc4912?q=80&w=2000');">
+                    <div class="hero-slide idx-hero-slide-3">
                         <div class="hero-overlay"></div>
                         <div class="hero-content">
                             <span class="hero-category">WEEKLY AUCTION</span>
@@ -177,7 +179,7 @@
             <div class="links-grid">
                 <a href="<%= request.getContextPath() %>/auction/auction.jsp" class="link-item">
 				    <i class="fas fa-gavel"></i>
-				    <span>Live Auction</span>
+				    <span>Auction</span>
 				</a>
                 <a href="<%=ctx%>/auction/auction.jsp" class="link-item">
                     <i class="fas fa-laptop"></i>
@@ -227,8 +229,8 @@
                             if (displayCount >= 3) break;
                             
                             // 경매 상태 뱃지 결정
-                            String badgeClass = "A".equals(product.getStatus()) ? "live" : "online";
-                            String badgeText = "A".equals(product.getStatus()) ? "Live" : "Online";
+                            String badgeClass = "online";
+                            String badgeText = "Online";
                             
                             // 경매 시간 포맷 (START_TIME이 없으면 END_TIME 사용)
                             String auctionDate = "";
@@ -248,7 +250,6 @@
                                 <% } else { %>
                                     <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=600" alt="<%=product.getProductName()%>">
                                 <% } %>
-                                <div class="auction-badge <%=badgeClass%>"><%=badgeText%></div>
                                 <button class="wishlist-btn" data-product-id="<%=product.getProductId()%>" title="찜 추가">
                                     <i class="far fa-heart"></i>
                                 </button>
@@ -260,9 +261,17 @@
                                     <% if (product.getArtistName() != null) { %>
                                         <%=product.getArtistName()%>
                                     <% } else { %>
-                                        현재가: <%=df.format(currentPrice)%>원
+                                        예술 작품
                                     <% } %>
                                 </p>
+                                <div class="auction-price">
+                                    <div class="price-info">
+                                        <span class="start-price">시작가: ₩<%=df.format(product.getStartPrice())%></span>
+                                        <% if (product.getCurrentPrice() > 0 && product.getCurrentPrice() != product.getStartPrice()) { %>
+                                            <span class="current-price">현재가: ₩<%=df.format(product.getCurrentPrice())%></span>
+                                        <% } %>
+                                    </div>
+                                </div>
                                 <div class="auction-meta">
                                     <span class="time"><i class="far fa-clock"></i> <%=auctionTime%></span>
                                     <span class="lots"><i class="fas fa-list"></i> <a href="<%=ctx%>/product/productDetail.jsp?productId=<%=product.getProductId()%>">상세보기</a></span>
@@ -279,7 +288,6 @@
                         <div class="auction-card">
                             <div class="auction-image">
                                 <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=600" alt="경매">
-                                <div class="auction-badge online">Upcoming</div>
                             </div>
                             <div class="auction-info">
                                 <span class="auction-date">경매 준비중</span>
@@ -323,7 +331,6 @@
                                 <% } else { %>
                                     <img src="https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=600" alt="<%=product.getProductName()%>">
                                 <% } %>
-                                <div class="auction-badge online">Premium</div>
                             </div>
                             <div class="auction-info">
                                 <span class="auction-date"><%=auctionDate%></span>
@@ -332,9 +339,17 @@
                                     <% if (product.getArtistName() != null) { %>
                                         <%=product.getArtistName()%>
                                     <% } else { %>
-                                        시작가: <%=df.format(currentPrice)%>원
+                                        예술 작품
                                     <% } %>
                                 </p>
+                                <div class="auction-price">
+                                    <div class="price-info">
+                                        <span class="start-price">시작가: ₩<%=df.format(product.getStartPrice())%></span>
+                                        <% if (product.getCurrentPrice() > 0 && product.getCurrentPrice() != product.getStartPrice()) { %>
+                                            <span class="current-price">현재가: ₩<%=df.format(product.getCurrentPrice())%></span>
+                                        <% } %>
+                                    </div>
+                                </div>
                                 <div class="auction-meta">
                                     <span class="time"><i class="far fa-clock"></i> <%=auctionTime%></span>
                                     <span class="lots"><i class="fas fa-list"></i> <a href="<%=ctx%>/product/productDetail.jsp?productId=<%=product.getProductId()%>">상세보기</a></span>
@@ -351,7 +366,6 @@
                         <div class="auction-card">
                             <div class="auction-image">
                                 <img src="https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=600" alt="경매">
-                                <div class="auction-badge online">Premium</div>
                             </div>
                             <div class="auction-info">
                                 <span class="auction-date">프리미엄 경매 준비중</span>
@@ -398,7 +412,6 @@
                                 <% } else { %>
                                     <img src="https://images.unsplash.com/photo-1576086477369-b5ee4eec20d6?q=80&w=600" alt="<%=product.getProductName()%>">
                                 <% } %>
-                                <div class="auction-badge online">Weekly</div>
                             </div>
                             <div class="auction-info">
                                 <span class="auction-date"><%=auctionDate%></span>
@@ -407,9 +420,17 @@
                                     <% if (product.getArtistName() != null) { %>
                                         <%=product.getArtistName()%>
                                     <% } else { %>
-                                        현재가: <%=df.format(currentPrice)%>원
+                                        예술 작품
                                     <% } %>
                                 </p>
+                                <div class="auction-price">
+                                    <div class="price-info">
+                                        <span class="start-price">시작가: ₩<%=df.format(product.getStartPrice())%></span>
+                                        <% if (product.getCurrentPrice() > 0 && product.getCurrentPrice() != product.getStartPrice()) { %>
+                                            <span class="current-price">현재가: ₩<%=df.format(product.getCurrentPrice())%></span>
+                                        <% } %>
+                                    </div>
+                                </div>
                                 <div class="auction-meta">
                                     <span class="time"><i class="far fa-clock"></i> <%=auctionTime%></span>
                                     <span class="lots"><i class="fas fa-list"></i> <a href="<%=ctx%>/product/productDetail.jsp?productId=<%=product.getProductId()%>">상세보기</a></span>
@@ -426,7 +447,6 @@
                         <div class="auction-card">
                             <div class="auction-image">
                                 <img src="https://images.unsplash.com/photo-1576086477369-b5ee4eec20d6?q=80&w=600" alt="경매">
-                                <div class="auction-badge online">Weekly</div>
                             </div>
                             <div class="auction-info">
                                 <span class="auction-date">위클리 경매 준비중</span>
@@ -475,7 +495,7 @@
                                     <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=400" alt="<%=product.getProductName()%>">
                                 <% } %>
                                 <div class="artwork-overlay">
-                                    <button class="btn-wish" onclick="toggleWish(<%=product.getProductId()%>)"><i class="far fa-heart"></i></button>
+                                    <button class="wishlist-btn" data-product-id="<%=product.getProductId()%>" title="찜 추가"><i class="far fa-heart"></i></button>
                                     <a href="<%=ctx%>/product/productDetail.jsp?productId=<%=product.getProductId()%>" class="btn-view">상세보기</a>
                                 </div>
                             </div>
@@ -571,7 +591,7 @@
                 
                 <a href="<%=ctx%>/category/categoryList.jsp?category=고미술" class="category-item">
                     <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1569096651661-820d0de9b8ab?q=80&w=400" alt="고미술">
+                        <img src="<%=ctx%>/resources/product_images/category_antique.png" alt="고미술">
                         <div class="category-overlay">
                             <h3>고미술</h3>
                             <span>Ancient Art</span>
@@ -591,7 +611,7 @@
                 
                 <a href="<%=ctx%>/category/categoryList.jsp?category=판화" class="category-item">
                     <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=400" alt="판화">
+                        <img src="<%=ctx%>/resources/product_images/photography.jpg" alt="판화">
                         <div class="category-overlay">
                             <h3>판화</h3>
                             <span>Printmaking</span>
@@ -734,15 +754,35 @@
             const images = document.querySelectorAll('img');
             images.forEach(img => {
                 img.onerror = function() {
-                    // 랜덤 placeholder 이미지
-                    const placeholders = [
-                        'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=600',
-                        'https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=600',
-                        'https://images.unsplash.com/photo-1576086477369-b5ee4eec20d6?q=80&w=600',
-                        'https://images.unsplash.com/photo-1569096651661-820d0de9b8ab?q=80&w=600'
-                    ];
-                    const randomIndex = Math.floor(Math.random() * placeholders.length);
-                    this.src = placeholders[randomIndex];
+                    // alt 텍스트를 기반으로 적절한 대체 이미지 선택
+                    const altText = this.alt || '';
+                    let fallbackSrc = '';
+                    
+                    if (altText.includes('판화') || altText.includes('Printmaking')) {
+                        fallbackSrc = 'https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=400';
+                    } else if (altText.includes('고미술') || altText.includes('Ancient')) {
+                        fallbackSrc = 'https://images.unsplash.com/photo-1569096651661-820d0de9b8ab?q=80&w=400';
+                    } else if (altText.includes('회화') || altText.includes('Painting')) {
+                        fallbackSrc = 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=400';
+                    } else if (altText.includes('조각') || altText.includes('Sculpture')) {
+                        fallbackSrc = 'https://images.unsplash.com/photo-1561214115-f2f134cc4912?q=80&w=400';
+                    } else if (altText.includes('사진') || altText.includes('Photography')) {
+                        fallbackSrc = 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=400';
+                    } else if (altText.includes('추상화') || altText.includes('Abstract')) {
+                        fallbackSrc = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=400';
+                    } else {
+                        // 기본 랜덤 placeholder 이미지
+                        const placeholders = [
+                            'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?q=80&w=600',
+                            'https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=600',
+                            'https://images.unsplash.com/photo-1576086477369-b5ee4eec20d6?q=80&w=600',
+                            'https://images.unsplash.com/photo-1569096651661-820d0de9b8ab?q=80&w=600'
+                        ];
+                        const randomIndex = Math.floor(Math.random() * placeholders.length);
+                        fallbackSrc = placeholders[randomIndex];
+                    }
+                    
+                    this.src = fallbackSrc;
                     this.onerror = null; // 무한 루프 방지
                 };
             });
@@ -829,62 +869,10 @@
             });
         });
         
-        // Wish button toggle
-        document.querySelectorAll('.btn-wish').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const icon = this.querySelector('i');
-                icon.classList.toggle('far');
-                icon.classList.toggle('fas');
-                this.classList.toggle('active');
-            });
-        });
     </script>
     
     <!-- 찜 기능 JavaScript -->
     <script src="<%=ctx%>/resources/js/wishlist.js"></script>
     
-    <style>
-        /* 찜 버튼 스타일 for 메인 페이지 */
-        .auction-image {
-            position: relative;
-        }
-        
-        .wishlist-btn {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 3;
-            backdrop-filter: blur(10px);
-        }
-        
-        .wishlist-btn:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: scale(1.1);
-        }
-        
-        .wishlist-btn i {
-            font-size: 16px;
-            color: #666;
-            transition: all 0.3s ease;
-        }
-        
-        .wishlist-btn:hover i {
-            color: #dc2626;
-        }
-        
-        .wishlist-btn.wishlisted i {
-            color: #dc2626;
-        }
-    </style>
 </body>
 </html>

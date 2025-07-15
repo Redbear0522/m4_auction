@@ -149,6 +149,128 @@ public class BidDAO {
 			pstmt.setInt(3, bidPrice);
 			return pstmt.executeUpdate();
 		}
+	}
 
+	/**
+	 * 입찰 처리 + 마일리지 즉시 차감
+	 */
+	public boolean placeBidWithMileageDeduction(Connection conn, String memberId, int productId, int bidPrice) throws SQLException {
+		// 1. 해당 상품에 이전 입찰이 있는지 확인하고, 있다면 이전 입찰자에게 환불
+		String prevBidderSql = "SELECT BIDDER_ID, BID_PRICE FROM BID WHERE PRODUCT_ID = ? AND IS_SUCCESSFUL = 0 ORDER BY BID_PRICE DESC, BID_TIME ASC";
+		try (PreparedStatement pstmt = conn.prepareStatement(prevBidderSql)) {
+			pstmt.setInt(1, productId);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					String prevBidder = rs.getString("BIDDER_ID");
+					int prevBidPrice = rs.getInt("BID_PRICE");
+					
+					// 이전 입찰자들에게 마일리지 환불
+					String refundSql = "UPDATE USERS SET MILEAGE = MILEAGE + ? WHERE MEMBER_ID = ?";
+					try (PreparedStatement refundPstmt = conn.prepareStatement(refundSql)) {
+						refundPstmt.setInt(1, prevBidPrice);
+						refundPstmt.setString(2, prevBidder);
+						refundPstmt.executeUpdate();
+					}
+					
+					// 거래 내역 기록 (환불)
+					String logSql = "INSERT INTO TRANSACTION_LOG (LOG_ID, MEMBER_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_TIME, RELATED_ITEM_ID) VALUES (TRANSACTION_LOG_SEQ.NEXTVAL, ?, 'R', ?, SYSDATE, ?)";
+					try (PreparedStatement logPstmt = conn.prepareStatement(logSql)) {
+						logPstmt.setString(1, prevBidder);
+						logPstmt.setInt(2, prevBidPrice);
+						logPstmt.setInt(3, productId);
+						logPstmt.executeUpdate();
+					}
+				}
+			}
+		}
+		
+		// 2. 이전 입찰들을 환불 상태로 변경
+		String updatePrevBidsSql = "UPDATE BID SET IS_SUCCESSFUL = 2 WHERE PRODUCT_ID = ? AND IS_SUCCESSFUL = 0";
+		try (PreparedStatement pstmt = conn.prepareStatement(updatePrevBidsSql)) {
+			pstmt.setInt(1, productId);
+			pstmt.executeUpdate();
+		}
+		
+		// 3. 새로운 입찰자의 마일리지 차감
+		System.out.println("[DEBUG] 마일리지 차감 전 - 회원: " + memberId + ", 차감할 금액: " + bidPrice);
+		
+		// 3-1. 현재 마일리지 확인
+		String checkMileageSql = "SELECT MILEAGE FROM USERS WHERE MEMBER_ID = ?";
+		long currentMileage = 0;
+		try (PreparedStatement checkPstmt = conn.prepareStatement(checkMileageSql)) {
+			checkPstmt.setString(1, memberId);
+			try (ResultSet checkRs = checkPstmt.executeQuery()) {
+				if (checkRs.next()) {
+					currentMileage = checkRs.getLong("MILEAGE");
+					System.out.println("[DEBUG] 현재 마일리지: " + currentMileage);
+				} else {
+					System.err.println("[ERROR] 회원 정보를 찾을 수 없습니다: " + memberId);
+					return false;
+				}
+			}
+		}
+		
+		// 3-2. 마일리지 부족 체크
+		if (currentMileage < bidPrice) {
+			System.err.println("[ERROR] 마일리지 부족 - 보유: " + currentMileage + ", 필요: " + bidPrice);
+			return false;
+		}
+		
+		// 3-3. 마일리지 차감 실행
+		String deductSql = "UPDATE USERS SET MILEAGE = MILEAGE - ? WHERE MEMBER_ID = ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(deductSql)) {
+			pstmt.setInt(1, bidPrice);
+			pstmt.setString(2, memberId);
+			int updateCount = pstmt.executeUpdate();
+			System.out.println("[DEBUG] 마일리지 차감 결과 - 업데이트된 행 수: " + updateCount);
+			if (updateCount != 1) {
+				System.err.println("[ERROR] 마일리지 차감 실패 - 업데이트된 행 수: " + updateCount);
+				return false;
+			}
+		}
+		
+		// 3-4. 차감 후 마일리지 확인
+		try (PreparedStatement checkPstmt = conn.prepareStatement(checkMileageSql)) {
+			checkPstmt.setString(1, memberId);
+			try (ResultSet checkRs = checkPstmt.executeQuery()) {
+				if (checkRs.next()) {
+					long afterMileage = checkRs.getLong("MILEAGE");
+					System.out.println("[DEBUG] 차감 후 마일리지: " + afterMileage + " (차감된 금액: " + (currentMileage - afterMileage) + ")");
+				}
+			}
+		}
+		
+		// 4. 거래 내역 기록 (입찰 차감)
+		String logSql = "INSERT INTO TRANSACTION_LOG (LOG_ID, MEMBER_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_TIME, RELATED_ITEM_ID) VALUES (TRANSACTION_LOG_SEQ.NEXTVAL, ?, 'B', ?, SYSDATE, ?)";
+		try (PreparedStatement pstmt = conn.prepareStatement(logSql)) {
+			pstmt.setString(1, memberId);
+			pstmt.setInt(2, -bidPrice); // 음수로 차감 표시
+			pstmt.setInt(3, productId);
+			pstmt.executeUpdate();
+		}
+		
+		// 5. BID 테이블에 새로운 입찰 기록
+		String insertSql = "INSERT INTO BID (BID_ID, PRODUCT_ID, BIDDER_ID, BID_PRICE, BID_TIME, IS_SUCCESSFUL) VALUES (BID_SEQ.NEXTVAL, ?, ?, ?, SYSDATE, 0)";
+		try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
+			pstmt.setInt(1, productId);
+			pstmt.setString(2, memberId);
+			pstmt.setInt(3, bidPrice);
+			if (pstmt.executeUpdate() != 1) {
+				return false;
+			}
+		}
+		
+		// 6. PRODUCT 테이블의 최고가·최고입찰자 업데이트
+		String updateProductSql = "UPDATE PRODUCT SET CURRENT_PRICE = ?, WINNER_ID = ? WHERE PRODUCT_ID = ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(updateProductSql)) {
+			pstmt.setInt(1, bidPrice);
+			pstmt.setString(2, memberId);
+			pstmt.setInt(3, productId);
+			if (pstmt.executeUpdate() != 1) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

@@ -92,6 +92,16 @@
         .category-header {
             text-align: center;
             margin-bottom: 48px;
+            position: relative;
+        }
+        
+        .category-header-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            margin-bottom: 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
         
         .category-title {
@@ -434,6 +444,11 @@
     <div class="category-container">
         <!-- Category Header -->
         <div class="category-header">
+            <% if("고미술".equals(category)) { %>
+                <img src="<%=ctx%>/resources/product_images/category_antique.png" 
+                     alt="고미술 카테고리" 
+                     class="category-header-image">
+            <% } %>
             <h1 class="category-title"><%=categoryDisplayName%></h1>
             <p class="category-subtitle">최고 품질의 예술 작품을 만나보세요</p>
             

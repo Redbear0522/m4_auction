@@ -598,7 +598,30 @@
 <body>
     <jsp:include page="/layout/header/luxury-header.jsp" />
     
-   <jsp:include page="<%=ctx %>/layout/header/luxury-headr.jsp">
+    <div class="auction-container <%= type != null ? type : "" %>">
+        <!-- Header -->
+        <div class="auction-header <%= type != null ? type : "" %>">
+            <% if (type != null) { %>
+                <div class="auction-type-badge auction-type-<%=type%>">
+                    <%= type.equals("premium") ? "Premium Auction" : 
+                        type.equals("weekly") ? "Weekly Auction" : 
+                        type.equals("zerobase") ? "Zero Base Auction" : "Auction" %>
+                </div>
+            <% } %>
+            <h1 class="auction-title"><%=pageTitle%></h1>
+            <p class="auction-subtitle">
+                <% if (type != null) { %>
+                    <%= type.equals("premium") ? "최고 품질의 프리미엄 작품들을 만나보세요" : 
+                        type.equals("weekly") ? "매주 진행되는 다양한 장르의 경매입니다" : 
+                        type.equals("zerobase") ? "합리적인 가격으로 시작하는 기회의 경매입니다" : "현재 진행중인 모든 경매를 확인하세요" %>
+                <% } else if (status != null) { %>
+                    <%= status.equals("upcoming") ? "곧 시작될 예정인 경매 목록입니다" : 
+                        status.equals("past") ? "지난 경매 결과를 확인하세요" : "현재 진행중인 모든 경매를 확인하세요" %>
+                <% } else { %>
+                    현재 진행중인 모든 경매를 확인하세요
+                <% } %>
+            </p>
+        </div>
         
         <!-- Filter Bar -->
         <div class="filter-bar">
@@ -666,12 +689,15 @@
             %>
             <div class="product-card">
                 <div class="product-image">
-				    <% if(product.getImageRenamedName() != null) { %>
-				        <img src="<%=ctx%>/resources/product_images/<%=product.getImageRenamedName()%>">
-				    <% } else { %>
-				        <img src="<%=ctx%>/resources/product_images/no-image.png">
-				    <% } %>
-				</div>
+                    <% if(product.getImageRenamedName() != null) { %>
+                        <img src="<%=ctx%>/resources/product_images/<%=product.getImageRenamedName()%>" 
+                             alt="<%=product.getProductName()%>">
+                    <% } else { %>
+                        <div class="product-image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <span>이미지 없음</span>
+                        </div>
+                    <% } %>
                     
                     <% if("A".equals(product.getStatus())) { %>
                         <div class="product-status <%= isEndingSoon ? "status-ending" : "" %>">
@@ -700,10 +726,16 @@
                     <p class="product-artist"><%=product.getArtistName()%></p>
                     
                     <div class="product-price">
-                        <div class="current-price">
-                            ₩<%=df.format(product.getCurrentPrice() > 0 ? product.getCurrentPrice() : product.getStartPrice())%>
-                        </div>
-                        <div class="start-price">시작가: ₩<%=df.format(product.getStartPrice())%></div>
+                        <% if(product.getCurrentPrice() > 0 && product.getCurrentPrice() != product.getStartPrice()) { %>
+                            <div class="current-price">
+                                현재가: ₩<%=df.format(product.getCurrentPrice())%>
+                            </div>
+                            <div class="start-price">시작가: ₩<%=df.format(product.getStartPrice())%></div>
+                        <% } else { %>
+                            <div class="current-price">
+                                시작가: ₩<%=df.format(product.getStartPrice())%>
+                            </div>
+                        <% } %>
                     </div>
                     
                     <!-- 타입별 추가 정보 -->
