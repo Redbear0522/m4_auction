@@ -5,6 +5,7 @@
 <%@ page import="com.auction.dto.MemberDTO" %>
 <%@ page import="static com.auction.common.JDBCTemplate.*" %>
 <%
+    // 관리자 권한 체크
     MemberDTO loginUser = (MemberDTO)session.getAttribute("loginUser");
     if(loginUser == null || !"admin".equals(loginUser.getMemberId())) {
         response.sendRedirect(request.getContextPath() + "/index.jsp");
@@ -13,11 +14,16 @@
     String ctx = request.getContextPath();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DecimalFormat df = new DecimalFormat("###,###,###");
-
     String action = request.getParameter("action");
+
+    // 커넥션 및 통계 변수 선언 (중복 방지)
+    Connection conn = null;
+    int activeCount = 0, endedCount = 0, soonCount = 0;
+
+    // 경매 수동 종료
     if("close".equals(action)) {
         int productId = Integer.parseInt(request.getParameter("productId"));
-        Connection conn = getConnection();
+        conn = getConnection();
         try {
             String sql = "UPDATE PRODUCT SET END_TIME = SYSDATE WHERE PRODUCT_ID = ? AND STATUS = 'A'";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -35,6 +41,25 @@
         response.sendRedirect("auctionManage.jsp");
         return;
     }
+
+    // 통계 조회
+    try {
+        conn = getConnection();
+        PreparedStatement ps = conn.prepareStatement(
+            "SELECT " +
+              "(SELECT COUNT(*) FROM PRODUCT WHERE STATUS = 'A') AS ACTIVE, " +
+              "(SELECT COUNT(*) FROM PRODUCT WHERE STATUS = 'E') AS ENDED, " +
+              "(SELECT COUNT(*) FROM PRODUCT WHERE STATUS = 'A' AND END_TIME <= SYSDATE + 1/24) AS SOON " +
+              "FROM DUAL"
+        );
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()) {
+            activeCount = rs.getInt("ACTIVE");
+            endedCount = rs.getInt("ENDED");
+            soonCount = rs.getInt("SOON");
+        }
+        rs.close(); ps.close();
+    } catch(Exception e) { e.printStackTrace(); }
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -99,6 +124,12 @@
             .admin-layout{flex-direction:column; padding:22px 2vw;}
             .admin-sidebar{position:static; top:auto;}
         }
+        @media (max-width:700px){
+            .admin-header{margin-bottom:18px;}
+            .admin-title{font-size:22px;}
+            .table-header{padding:12px;}
+            .auction-table th, .auction-table td{padding:9px 6px;}
+        }
     </style>
 </head>
 <body>
@@ -134,30 +165,9 @@
         <% } %>
         <!-- 통계 카드 -->
         <div class="stats-grid">
-        <%
-            Connection conn = getConnection();
-            int activeCount = 0, endedCount = 0, soonCount = 0;
-            try {
-                PreparedStatement ps = conn.prepareStatement("SELECT " +
-                  "(SELECT COUNT(*) FROM PRODUCT WHERE STATUS = 'A') AS ACTIVE, " +
-                  "(SELECT COUNT(*) FROM PRODUCT WHERE STATUS = 'E') AS ENDED, " +
-                  "(SELECT COUNT(*) FROM PRODUCT WHERE STATUS = 'A' AND END_TIME <= SYSDATE + 1/24) AS SOON " +
-                  "FROM DUAL");
-                ResultSet rs = ps.executeQuery();
-                if(rs.next()) {
-                    activeCount = rs.getInt("ACTIVE");
-                    endedCount = rs.getInt("ENDED");
-                    soonCount = rs.getInt("SOON");
-                }
-                rs.close(); ps.close();
-        %>
             <div class="stat-card"><div class="stat-label">진행 중인 경매</div><div class="stat-value"><%=activeCount%></div></div>
             <div class="stat-card"><div class="stat-label">종료된 경매</div><div class="stat-value"><%=endedCount%></div></div>
             <div class="stat-card"><div class="stat-label">마감 임박(1시간)</div><div class="stat-value"><%=soonCount%></div></div>
-        <%
-            } catch(Exception e) { e.printStackTrace();
-            } // 통계 try
-        %>
         </div>
         <!-- 경매 목록 테이블 -->
         <div class="table-section">
@@ -240,6 +250,7 @@
 <script>
 function updateRemainingTimes() {
     document.querySelectorAll('.time-remaining[data-endtime]').forEach(el => {
+        // 데이터베이스 timestamp를 JS Date로 변환
         const endTime = new Date(el.dataset.endtime.replace(' ', 'T'));
         const now = new Date();
         const diff = endTime - now;

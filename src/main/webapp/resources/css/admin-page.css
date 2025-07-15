@@ -20,7 +20,11 @@
 /* Sidebar Styles */
 .adm-sidebar {
     width: 260px;
+<<<<<<< HEAD
     background: linear-gradient(135deg, #8B4513 0%, #CD853F  100%);
+=======
+    background-color: #2c3e50;
+>>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
     color: white;
     padding: 20px 0;
     position: fixed;
@@ -32,7 +36,11 @@
 .adm-sidebar-header {
     text-align: center;
     padding: 0 20px 30px;
+<<<<<<< HEAD
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+=======
+    border-bottom: 1px solid #34495e;
+>>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
     margin-bottom: 20px;
 }
 
@@ -68,12 +76,21 @@
 }
 
 .adm-sidebar-menu a:hover {
+<<<<<<< HEAD
     background-color: rgba(255, 255, 255, 0.1);
 }
 
 .adm-sidebar-menu a.active {
     background-color: #D2691E;
     border-left: 4px solid #B8860B;
+=======
+    background-color: #34495e;
+}
+
+.adm-sidebar-menu a.active {
+    background-color: #3498db;
+    border-left: 4px solid #2980b9;
+>>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
 }
 
 /* Main Content */

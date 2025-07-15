@@ -1,13 +1,28 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.auction.dto.MemberDTO" %>
-
+<%@ page import="com.auction.dao.WishlistDAO" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="static com.auction.common.JDBCTemplate.*" %>
 <%
     MemberDTO loginUser = (MemberDTO) session.getAttribute("loginUser");
     String ctx = request.getContextPath();
+
+    int wishlistCount = 0;
+    if (loginUser != null) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            WishlistDAO dao = new WishlistDAO();  // 인스턴스 생성
+            wishlistCount = dao.selectWishlistCount(conn, loginUser.getMemberId());
+        } catch(Exception e) {
+            wishlistCount = 0;
+        } finally {
+            if (conn != null) close(conn);
+        }
+    }
 %>
 
 <header class="luxury-header">
-    <!-- Top Bar -->
     <div class="header-top">
         <div class="container">
             <div class="top-left">
@@ -26,9 +41,9 @@
             </div>
             <div class="top-right">
                 <% if (loginUser != null) { %>
-    					<a href="<%=ctx%>/mypage/myPage.jsp" class="user-link">
-        				<i class="fas fa-user"></i> <%= loginUser.getMemberName() %>님
-    					</a>
+                    <a href="<%=ctx%>/mypage/myPage.jsp" class="user-link">
+                        <i class="fas fa-user"></i> <%= loginUser.getMemberName() %>님
+                    </a>
                     <% if("admin".equals(loginUser.getMemberId())) { %>
                     <span class="divider">|</span>
                     <a href="<%=ctx%>/admin/adminPage.jsp" class="admin-link">
@@ -40,7 +55,7 @@
                 <% } else { %>
                     <a href="#" onclick="openLoginModal(); return false;">LOGIN</a>
                     <span class="divider">|</span>
-                    <a href="<%=request.getContextPath()%>/member/enroll_step1.jsp">JOIN</a>
+                    <a href="<%=ctx%>/member/enroll_step1.jsp">JOIN</a>
                 <% } %>
             </div>
         </div>
@@ -50,15 +65,12 @@
     <div class="header-main">
         <div class="container">
             <div class="header-wrapper">
-                <!-- Logo -->
                 <div class="logo">
                     <a href="<%=ctx%>/index.jsp">
                         <span class="logo-text">M4 Auction</span>
                         <span class="logo-tagline">Premium Art & Luxury</span>
                     </a>
                 </div>
-                
-                <!-- Navigation -->
                 <nav class="main-nav">
                     <ul>
                         <li class="has-mega-menu">
@@ -145,23 +157,16 @@
                         <li><a href="<%=ctx%>/sitemap.jsp">Sitemap</a></li>
                     </ul>
                 </nav>
-                
-                <!-- Header Actions -->
                 <div class="header-actions">
                     <button class="search-toggle">
                         <i class="fas fa-search"></i>
                     </button>
-                    <% if (loginUser != null) { %>
-                        <a href="<%=ctx%>/wishlist/wishlistPage.jsp" class="wishlist-link">
-                            <i class="far fa-heart"></i>
-                            <span class="count" id="wishlistCount">0</span>
-                        </a>
-                    <% } else { %>
-                        <a href="#" onclick="openLoginModal(); return false;" class="wishlist-link">
-                            <i class="far fa-heart"></i>
-                            <span class="count">0</span>
-                        </a>
-                    <% } %>
+                    <a href="<%= loginUser != null ? ctx + "/wishlist/wishlistPage.jsp" : "#" %>" 
+                       class="wishlist-link" 
+                       <%= loginUser == null ? "onclick=\"openLoginModal(); return false;\"" : "" %>>
+                        <i class="far fa-heart"></i>
+                        <span class="count" id="wishlistCount"><%=wishlistCount%></span>
+                    </a>
                     <button class="mobile-menu-toggle">
                         <span></span>
                         <span></span>
@@ -171,28 +176,25 @@
             </div>
         </div>
     </div>
-    
-    <!-- Search Bar (Hidden by default) -->
-    
-        <div class="search-bar">
-    	<div class="container">
-        	<form class="search-form" action="<%=ctx%>/search/searchResult.jsp" method="get">
-            	<input type="text" name="keyword" placeholder="작가명, 작품명, 경매번호를 입력하세요" autocomplete="off">
-            	<button type="submit"><i class="fas fa-search"></i></button>
-        	</form>
-        <button type="button" class="search-close"><i class="fas fa-times"></i></button>
-        <div class="search-suggestions">
-            <h4>인기 검색어</h4>
-            <div class="tag-list">
-                <a href="<%=ctx%>/search/searchResult.jsp?keyword=김환기" class="tag">김환기</a>
-                <a href="<%=ctx%>/search/searchResult.jsp?keyword=이우환" class="tag">이우환</a>
-                <a href="<%=ctx%>/search/searchResult.jsp?keyword=박수근" class="tag">박수근</a>
-                <a href="<%=ctx%>/search/searchResult.jsp?keyword=이중섭" class="tag">이중섭</a>
-                <a href="<%=ctx%>/search/searchResult.jsp?keyword=천경자" class="tag">천경자</a>
+    <div class="search-bar">
+        <div class="container">
+            <form class="search-form" action="<%=ctx%>/search/searchResult.jsp" method="get">
+                <input type="text" name="keyword" placeholder="작가명, 작품명, 경매번호를 입력하세요" autocomplete="off">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <button type="button" class="search-close"><i class="fas fa-times"></i></button>
+            <div class="search-suggestions">
+                <h4>인기 검색어</h4>
+                <div class="tag-list">
+                    <a href="<%=ctx%>/search/searchResult.jsp?keyword=김환기" class="tag">김환기</a>
+                    <a href="<%=ctx%>/search/searchResult.jsp?keyword=이우환" class="tag">이우환</a>
+                    <a href="<%=ctx%>/search/searchResult.jsp?keyword=박수근" class="tag">박수근</a>
+                    <a href="<%=ctx%>/search/searchResult.jsp?keyword=이중섭" class="tag">이중섭</a>
+                    <a href="<%=ctx%>/search/searchResult.jsp?keyword=천경자" class="tag">천경자</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </header>
 
 <!-- 로그인 모달 -->

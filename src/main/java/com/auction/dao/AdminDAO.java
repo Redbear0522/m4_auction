@@ -432,6 +432,4 @@ public class AdminDAO {
         }
         return list;
     }
-
-    
 }

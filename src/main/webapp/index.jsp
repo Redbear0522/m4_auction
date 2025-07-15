@@ -611,7 +611,11 @@
                 
                 <a href="<%=ctx%>/category/categoryList.jsp?category=판화" class="category-item">
                     <div class="category-image">
+<<<<<<< HEAD
                         <img src="https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=400" alt="판화">
+=======
+                        <img src="<%=ctx%>/resources/product_images/photography.jpg" alt="판화">
+>>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
                         <div class="category-overlay">
                             <h3>판화</h3>
                             <span>Printmaking</span>

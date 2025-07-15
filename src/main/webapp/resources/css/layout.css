@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+origin/main
+>>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
 /* 기본 스타일 초기화 및 폰트 설정 */
 * {
     box-sizing: border-box;
@@ -378,6 +382,7 @@ a {
     background-color: #ffcdd2;
 }
 
+<<<<<<< HEAD
 /* 푸터 스타일 */
 .footer {
   text-align: center;
@@ -386,3 +391,14 @@ a {
   background-color: #2c3e50;
   color: #ecf0f1;
 }}
+=======
+
+/* 푸터 스타일 */
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+>>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa

@@ -1,14 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List, java.sql.Connection" %>
-<%@ page import="java.text.DecimalFormat" %>
 <%@ page import="com.auction.dao.ProductDAO, com.auction.dto.ProductDTO" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%@ page import="static com.auction.common.JDBCTemplate.*" %>
 <%
     String ctx = request.getContextPath();
     List<ProductDTO> productList = null;
     DecimalFormat df = new DecimalFormat("###,###");
     try (Connection conn = getConnection()) {
-        // 전체 상품 다 가져옴 (페이징X)
         productList = new ProductDAO().selectAllProducts(conn);
     } catch (Exception e) { e.printStackTrace(); }
 %>
@@ -55,21 +54,18 @@
         .product-info { padding: 18px 16px 16px 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
         .product-title { font-size: 17px; font-weight: 700; color: #333; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .product-meta, .product-meta2 { color: #888; font-size: 13px; }
-        .product-price { color: #c9961a; font-size: 16px; font-weight: 600; }
+        .product-curruntprice { color: #c9961a; font-size: 16px; font-weight: 600; }
         .details-btn { margin-top: 13px; padding: 9px 0; background: #c9961a; color: #fff; border-radius: 8px; text-align: center; text-decoration: none; font-weight: 700; transition: background 0.2s; display: block; }
         .details-btn:hover { background: #ad870e; }
         .empty-state { text-align: center; color: #aaa; padding: 60px 0 30px 0; grid-column: 1 / -1; }
         .empty-state i { font-size: 48px; opacity: 0.45; margin-bottom: 18px; display: block;}
-        @media (max-width: 900px) {
-            .product-list-container { grid-template-columns: repeat(2,1fr);}
-        }
-        @media (max-width: 600px) {
-            .product-list-container { grid-template-columns: 1fr;}
-        }
+        @media (max-width: 900px) { .product-list-container { grid-template-columns: repeat(2,1fr);} }
+        @media (max-width: 600px) { .product-list-container { grid-template-columns: 1fr;} .admin-layout{flex-direction:column;} }
     </style>
 </head>
 <body>
 <jsp:include page="/layout/header/luxury-header.jsp" flush="true"/>
+
 <div class="admin-layout">
     <!-- 사이드바 -->
     <div class="admin-sidebar">
@@ -118,8 +114,9 @@
             <div class="product-info">
                 <div class="product-title"><%= p.getProductName() %></div>
                 <div class="product-meta">등록자: <%= p.getSellerId() %></div>
-                <div class="product-price"><%= df.format(p.getCurrentPrice()) %> 원</div>
-                <div class="product-meta2 timer">
+                <div class="product-curruntprice">현재가 <%= df.format(p.getCurrentPrice()) %> 원</div>
+                <div class="product-meta2 timer"
+                     data-endtime="<%= p.getEndTime() != null ? p.getEndTime() : "" %>">
                     마감일
                     <% if (p.getEndTime() != null) { %>
                         <%= p.getEndTime() %>
