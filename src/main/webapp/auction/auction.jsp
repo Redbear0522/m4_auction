@@ -477,21 +477,15 @@
                             작가: <%= product.getArtistName() != null ? product.getArtistName() : "Unknown" %>
                         </p>
                         <div class="price-info">
-						    <span class="current-price">
-						        ₩ 
-						        <%
-						            int priceToShow = (product.getCurrentPrice() == 0) ? product.getStartPrice() : product.getCurrentPrice();
-						            out.print(df.format(priceToShow));
-						        %>
-						    </span>
-						    <span class="end-time">
-						        <% if(timeLeft > 0) { %>
-						            <%= daysLeft %>일 <%= hoursLeft %>시간 남음
-						        <% } else { %>
-						            경매 종료
-						        <% } %>
-						    </span>
-						</div>
+                            <span class="current-price">₩ <%= df.format(product.getCurrentPrice() > 0 ? product.getCurrentPrice() : product.getStartPrice()) %></span>
+                            <span class="end-time">
+                                <% if(timeLeft > 0) { %>
+                                    <%= daysLeft %>일 <%= hoursLeft %>시간 남음
+                                <% } else { %>
+                                    경매 종료
+                                <% } %>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <% } %>

@@ -97,10 +97,17 @@ ul {
 
 /* Header Top */
 .header-top {
+<<<<<<< HEAD
 	background: var(--bg-light);
 	border-bottom: 1px solid var(--border-light);
 	padding: 10px 0;
 	font-size: 13px;
+=======
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border-light);
+    padding: 5px 0;
+    font-size: 13px;
+>>>>>>> ff68e9dbf1e49807d5d08442ceef321bc26ff685
 }
 
 .header-top .container {
@@ -154,7 +161,11 @@ ul {
 
 /* Header Main */
 .header-main {
+<<<<<<< HEAD
 	padding: 20px 0;
+=======
+    padding: 15px 0;
+>>>>>>> ff68e9dbf1e49807d5d08442ceef321bc26ff685
 }
 
 .header-wrapper {
