@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(echo:*)",
+      "Bash(BACKUP_DIR=\"/mnt/c/dev/web/acu/backup_$(date +%Y%m%d_%H%M)\")",
+      "Bash(sed:*)",
+      "mcp__filesystem__directory_tree",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__filesystem__search_files",
+      "mcp__filesystem__list_allowed_directories",
+      "mcp__filesystem__list_directory"
+    ],
+    "deny": []
+  }
+}
