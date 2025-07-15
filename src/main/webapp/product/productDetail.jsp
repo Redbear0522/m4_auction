@@ -28,20 +28,6 @@
     // 상태 플래그 (시간 기반 종료 체크 추가)
     java.util.Date now = new java.util.Date();
     
-    // 디버깅 정보 출력
-    if (p != null) {
-        System.out.println("=== 상품 상세 디버깅 정보 ===");
-        System.out.println("상품명: " + p.getProductName());
-        System.out.println("현재시간: " + now);
-        System.out.println("종료시간: " + p.getEndTime());
-        System.out.println("상품상태: " + p.getStatus());
-        if (p.getEndTime() != null) {
-            System.out.println("시간비교 결과(now.after(endTime)): " + now.after(p.getEndTime()));
-            System.out.println("시간차이(ms): " + (p.getEndTime().getTime() - now.getTime()));
-        }
-        System.out.println("===============================");
-    }
-    
     boolean isTimeEnded = p != null && p.getEndTime() != null && now.after(p.getEndTime());
     boolean isEnded = p != null && ("E".equals(p.getStatus()) || isTimeEnded);
     boolean isSeller = p != null && loginUser.getMemberId().equals(p.getSellerId());
