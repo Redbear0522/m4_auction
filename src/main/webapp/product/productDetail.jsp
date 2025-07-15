@@ -29,6 +29,16 @@
     boolean isEnded = p != null && "E".equals(p.getStatus());
     boolean isSeller = p != null && loginUser.getMemberId().equals(p.getSellerId());
     boolean isWinner = p != null && p.getWinnerId() != null && loginUser.getMemberId().equals(p.getWinnerId());
+    
+    // 낙찰 완료 상품 접근 제한 - 판매자, 낙찰자, 관리자만 접근 가능
+    boolean isAdmin = "admin".equals(loginUser.getMemberId());
+    boolean canAccess = !isEnded || isSeller || isWinner || isAdmin;
+    
+    if (p != null && isEnded && !canAccess) {
+        session.setAttribute("alertMsg", "이미 낙찰 완료된 상품입니다. 접근 권한이 없습니다.");
+        response.sendRedirect(ctx + "/auction/auctionList.jsp");
+        return;
+    }
 
     // 포맷터 준비
     DecimalFormat df = new DecimalFormat("###,###,###");
@@ -630,8 +640,8 @@
                             <i class="fas fa-share"></i>
                             공유하기
                         </a>
-                        <a href="#" class="action-link" onclick="addToWishlist()">
-                            <i class="fas fa-heart"></i>
+                        <a href="#" class="action-link wishlist-btn" data-product-id="<%=productId%>" title="관심상품 추가">
+                            <i class="far fa-heart"></i>
                             관심상품
                         </a>
                     </div>
@@ -737,10 +747,7 @@
             }
         }
         
-        // 관심상품 추가 (임시)
-        function addToWishlist() {
-            alert('관심상품 기능은 곧 구현될 예정입니다.');
-        }
+        // 관심상품 기능은 wishlist.js에서 처리됩니다
         
         // 타이머 제거됨 - 정적 마감일시 사용
         

@@ -263,6 +263,62 @@
             text-align: center;
         }
         
+        /* 이미지 미리보기 스타일 */
+        .image-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border: 2px solid #16a34a;
+            border-radius: 8px;
+        }
+        
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .preview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .preview-filename {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .remove-image {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            align-self: flex-start;
+        }
+        
+        .remove-image:hover {
+            background: #b91c1c;
+        }
+        
+        .file-input-wrapper.has-image {
+            cursor: default;
+        }
+        
+        .file-input-wrapper.has-image .file-input-content {
+            display: none;
+        }
+        
         /* 반응형 */
         @media (max-width: 768px) {
             body {
@@ -418,12 +474,21 @@
                                name="productImage" 
                                class="file-input"
                                accept="image/*" 
-                               onchange="updateFileName(this)"
+                               onchange="previewImage(this)"
                                required>
-                        <div class="file-input-content">
+                        <div class="file-input-content" id="fileInputContent">
                             <i class="fas fa-cloud-upload-alt file-input-icon"></i>
                             <div class="file-input-text">이미지 파일을 선택하세요</div>
                             <div class="file-input-hint">JPG, PNG, GIF (최대 10MB)</div>
+                        </div>
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="" alt="미리보기">
+                            <div class="preview-info">
+                                <div class="preview-filename" id="previewFilename"></div>
+                                <button type="button" class="remove-image" onclick="removeImage()">
+                                    <i class="fas fa-times"></i> 제거
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -442,20 +507,63 @@
     <jsp:include page="/layout/footer/luxury-footer.jsp" />
     
     <script>
-        // 파일명 표시 업데이트
-        function updateFileName(input) {
+        // 이미지 미리보기 함수
+        function previewImage(input) {
             const wrapper = input.closest('.file-input-wrapper');
-            const textElement = wrapper.querySelector('.file-input-text');
+            const fileInputContent = document.getElementById('fileInputContent');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            const previewFilename = document.getElementById('previewFilename');
             
             if (input.files && input.files[0]) {
-                textElement.textContent = input.files[0].name;
-                wrapper.style.borderColor = '#16a34a';
-                wrapper.style.background = '#f0fdf4';
-            } else {
-                textElement.textContent = '이미지 파일을 선택하세요';
-                wrapper.style.borderColor = '#d1d5db';
-                wrapper.style.background = '#f9fafb';
+                const file = input.files[0];
+                
+                // 파일 크기 체크 (10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('파일 크기는 10MB 이하여야 합니다.');
+                    input.value = '';
+                    return;
+                }
+                
+                // 이미지 파일 체크
+                if (!file.type.startsWith('image/')) {
+                    alert('이미지 파일만 업로드 가능합니다.');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewFilename.textContent = file.name;
+                    
+                    // UI 업데이트
+                    fileInputContent.style.display = 'none';
+                    imagePreview.style.display = 'flex';
+                    wrapper.classList.add('has-image');
+                    wrapper.style.borderColor = '#16a34a';
+                    wrapper.style.background = '#f0fdf4';
+                };
+                reader.readAsDataURL(file);
             }
+        }
+        
+        // 이미지 제거 함수
+        function removeImage() {
+            const input = document.getElementById('productImage');
+            const wrapper = input.closest('.file-input-wrapper');
+            const fileInputContent = document.getElementById('fileInputContent');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            // 파일 입력 초기화
+            input.value = '';
+            
+            // UI 복원
+            fileInputContent.style.display = 'block';
+            imagePreview.style.display = 'none';
+            wrapper.classList.remove('has-image');
+            wrapper.style.borderColor = '#d1d5db';
+            wrapper.style.background = '#f9fafb';
         }
         
         // 폼 검증

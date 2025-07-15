@@ -94,7 +94,7 @@ ul {
 .header-top {
     background: var(--bg-light);
     border-bottom: 1px solid var(--border-light);
-    padding: 10px 0;
+    padding: 5px 0;
     font-size: 13px;
 }
 
@@ -149,7 +149,7 @@ ul {
 
 /* Header Main */
 .header-main {
-    padding: 20px 0;
+    padding: 15px 0;
 }
 
 .header-wrapper {

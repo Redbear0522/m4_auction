@@ -13,7 +13,7 @@
             <div class="top-left">
                 <% if (loginUser != null) { %>
                     <span class="welcome-text">
-                        Welcome, <%= loginUser.getMemberName() %>님
+                        Welcome, <%= loginUser.getMemberName() %>
                         <% if (loginUser.isVip()) { %>
                             <span class="vip-badge" style="background: linear-gradient(45deg, #c9961a, #d4af37); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;">
                                 <i class="fas fa-crown"></i> VIP

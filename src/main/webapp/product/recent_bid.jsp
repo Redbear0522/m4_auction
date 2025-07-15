@@ -9,44 +9,9 @@
 <html>
 <head>
     <title>최근 낙찰된 상품</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: 30px auto;
-        }
-        .title {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 30px;
-        }
-        .win-item {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .win-item img {
-            width: 100px;
-            height: 100px;
-            margin-right: 20px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .win-info {
-            flex-grow: 1;
-        }
-        .win-info strong {
-            font-size: 18px;
-        }
-        .win-info span {
-            display: block;
-            margin-top: 5px;
-            color: #555;
-        }
-    </style>
+    
+    <!-- Recent Bid Page Styles -->
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/recent-bid.css">
 </head>
 <body>
 <jsp:include page="/layout/header/luxury-header.jsp" />
