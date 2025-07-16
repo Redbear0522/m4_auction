@@ -132,7 +132,6 @@
             <li><a href="<%=request.getContextPath()%>/admin/allProduct.jsp"><i class="fas fa-box"></i> 전체 상품 관리</a></li>
             <li><a href="<%=request.getContextPath()%>/admin/auctionManage.jsp"><i class="fas fa-gavel"></i> 경매 관리</a></li>
             <li><a href="<%=request.getContextPath()%>/admin/chargeRequestList.jsp"><i class="fas fa-coins"></i> 마일리지 충전 관리</a></li>
-            <li><a href="<%=request.getContextPath()%>/admin/vipRequestList.jsp"><i class="fas fa-crown"></i> VIP 신청 관리</a></li>
             <li><a href="<%=request.getContextPath()%>/admin/memberManage.jsp"><i class="fas fa-users"></i> 회원 관리</a></li>
             <li><a href="<%=request.getContextPath()%>/admin/bidHistory.jsp"><i class="fas fa-list"></i> 입찰 내역 관리</a></li>
             <li><a href="<%=request.getContextPath()%>/admin/siteStatistics.jsp"><i class="fas fa-chart-bar"></i> 사이트 통계</a></li>
@@ -275,9 +274,6 @@
                     <% }} %>
                 </div>
             <% } %>
-            <a class="more-btn" style="background:#684bb1;margin-top:24px;" href="<%= request.getContextPath() %>/admin/vipRequestList.jsp">
-                <i class="fas fa-crown"></i> VIP 신청 관리
-            </a>
         </div>
     </div>
 </div>

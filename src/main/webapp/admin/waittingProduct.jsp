@@ -409,10 +409,6 @@
                     <i class="fas fa-coins"></i>
                     마일리지 충전 관리
                 </a></li>
-                <li><a href="<%=request.getContextPath()%>/admin/vipRequestList.jsp">
-                    <i class="fas fa-crown"></i>
-                    VIP 신청 관리
-                </a></li>
                 <li><a href="<%=request.getContextPath()%>/admin/memberManage.jsp">
                     <i class="fas fa-users"></i>
                     회원 관리

@@ -136,22 +136,54 @@
 <jsp:include page="/layout/header/luxury-header.jsp" flush="true"/>
 <div class="admin-layout">
     <!-- 사이드바 -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h2 class="sidebar-title">Admin Panel</h2>
-            <p class="sidebar-subtitle">관리자 도구</p>
+        <div class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">관리자 패널</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="<%=request.getContextPath()%>/admin/adminPage.jsp">
+                    <i class="fas fa-tachometer-alt"></i>
+                    대시보드
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/waittingProduct.jsp">
+                    <i class="fas fa-clock"></i>
+                    상품 승인 관리
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/allProduct.jsp" >
+                    <i class="fas fa-box"></i>
+                    전체 상품 관리
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/auctionManage.jsp" class="active">
+                    <i class="fas fa-gavel"></i>
+                    경매 관리
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/chargeRequestList.jsp">
+                    <i class="fas fa-coins"></i>
+                    마일리지 충전 관리
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/memberManage.jsp">
+                    <i class="fas fa-users"></i>
+                    회원 관리
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/bidHistory.jsp">
+                    <i class="fas fa-list"></i>
+                    입찰 내역 관리
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/siteStatistics.jsp">
+                    <i class="fas fa-chart-bar"></i>
+                    사이트 통계
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/systemSettings.jsp">
+                    <i class="fas fa-cog"></i>
+                    시스템 설정
+                </a></li>
+                <li><a href="<%=request.getContextPath()%>/index.jsp">
+                    <i class="fas fa-home"></i>
+                    메인 페이지로
+                </a></li>
+            </ul>
         </div>
-        <ul class="sidebar-menu">
-            <li><a href="<%=ctx%>/admin/adminPage.jsp"><i class="fas fa-tachometer-alt"></i> 대시보드</a></li>
-            <li><a href="<%=ctx%>/admin/allProduct.jsp"><i class="fas fa-box"></i> 전체상품관리</a></li>
-            <li><a href="<%=ctx%>/admin/waittingProduct.jsp"><i class="fas fa-clock"></i> 승인대기상품</a></li>
-            <li><a href="<%=ctx%>/admin/auctionManage.jsp" class="active"><i class="fas fa-gavel"></i> 경매관리</a></li>
-            <li><a href="<%=ctx%>/admin/memberManage.jsp"><i class="fas fa-users"></i> 회원관리</a></li>
-            <li><a href="<%=ctx%>/admin/chargeList.jsp"><i class="fas fa-credit-card"></i> 충전관리</a></li>
-            <li><a href="<%=ctx%>/admin/vipRequestList.jsp"><i class="fas fa-crown"></i> VIP 신청관리</a></li>
-            <li><a href="<%=ctx%>/admin/siteStatistics.jsp"><i class="fas fa-chart-bar"></i> 통계</a></li>
-        </ul>
-    </div>
     <!-- 메인 컨텐츠 -->
     <div class="admin-content">
         <div class="admin-header">

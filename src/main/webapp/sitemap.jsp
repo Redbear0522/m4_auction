@@ -225,9 +225,6 @@
                     </div>
                     <ul class="sitemap-list">
                         <li><a href="<%=ctx%>/guide/auctionGuide.jsp">위탁 안내</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">작품 감정</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">프라이빗 세일</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">전시 대관</a></li>
                     </ul>
                 </div>
 

@@ -86,14 +86,6 @@
                                         </ul>
                                     </div>
                                     <div class="menu-column">
-                                        <h4>카테고리별</h4>
-                                        <ul>
-                                            <li><a href="<%=ctx%>/category/categoryList.jsp?category=회화">회화</a></li>
-                                            <li><a href="<%=ctx%>/category/categoryList.jsp?category=조각">조각</a></li>
-                                            <li><a href="<%=ctx%>/category/categoryList.jsp?category=고미술">고미술</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="menu-column">
                                         <h4>경매 안내</h4>
                                         <ul>
                                             <li><a href="<%=ctx%>/guide/biddingGuide.jsp">응찰 방법</a></li>
@@ -119,6 +111,8 @@
                                         <h4>카테고리</h4>
                                         <ul>
                                             <li><a href="<%=ctx%>/category/categoryList.jsp?category=회화">회화</a></li>
+                                            <li><a href="<%=ctx%>/category/categoryList.jsp?category=조각">조각</a></li>
+                                            <li><a href="<%=ctx%>/category/categoryList.jsp?category=고미술">고미술</a></li>
                                             <li><a href="<%=ctx%>/category/categoryList.jsp?category=판화">판화</a></li>
                                             <li><a href="<%=ctx%>/category/categoryList.jsp?category=사진">사진</a></li>
                                             <li><a href="<%=ctx%>/category/categoryList.jsp?category=추상화">추상화</a></li>
@@ -127,7 +121,6 @@
                                 </div>
                             </div>
                         </li>
-                        <li><a href="<%=ctx%>/guide/biddingGuide.jsp">How To</a></li>
                         <li><a href="<%=ctx%>/news/newsList.jsp">News</a></li>
                         <li class="has-mega-menu">
                             <a href="#">Services</a>
@@ -138,15 +131,6 @@
                                         <ul>
                                             <li><a href="<%=ctx%>/guide/auctionGuide.jsp">위탁 절차</a></li>
                                             <li><a href="<%=ctx%>/product/productEnrollForm.jsp">위탁 신청</a></li>
-                                            <li><a href="<%=ctx%>/guide/biddingGuide.jsp">수수료 안내</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="menu-column">
-                                        <h4>기타 서비스</h4>
-                                        <ul>
-                                            <li><a href="<%=ctx%>/guide/auctionGuide.jsp">작품 감정</a></li>
-                                            <li><a href="<%=ctx%>/guide/auctionGuide.jsp">프라이빗 세일</a></li>
-                                            <li><a href="<%=ctx%>/guide/auctionGuide.jsp">아트 컨설팅</a></li>
                                         </ul>
                                     </div>
                                 </div>

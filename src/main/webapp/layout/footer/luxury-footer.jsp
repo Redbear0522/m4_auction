@@ -39,10 +39,6 @@
                     <h4>Services</h4>
                     <ul>
                         <li><a href="<%=ctx%>/guide/auctionGuide.jsp">위탁 안내</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">작품 감정</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">프라이빗 세일</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">아트 컨설팅</a></li>
-                        <li><a href="<%=ctx%>/guide/auctionGuide.jsp">전시 대관</a></li>
                     </ul>
                 </div>
                 
@@ -51,10 +47,7 @@
                     <h4>About</h4>
                     <ul>
                         <li><a href="<%=ctx%>/company/about.jsp">회사 소개</a></li>
-                        <li><a href="<%=ctx%>/company/about.jsp">인사말</a></li>
-                        <li><a href="<%=ctx%>/company/about.jsp">전문가 소개</a></li>
                         <li><a href="<%=ctx%>/company/contact.jsp">오시는 길</a></li>
-                        <li><a href="<%=ctx%>/company/contact.jsp">채용 정보</a></li>
                     </ul>
                 </div>
                 
