@@ -14,7 +14,6 @@
         ResultSet rs = null;
         
         try {
-            // 여기! USERS 테이블로 바꿨나요?
             String sql = "SELECT COUNT(*) FROM USERS WHERE MEMBER_ID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, checkId);

@@ -64,10 +64,13 @@ function toggleWishlist(productId, buttonElement) {
             
             // 성공 메시지 표시 (선택적)
             showWishlistToast(data.message, data.isWishlisted);
-            
+			
+			//페이지 새로고침
+					location.reload();
         } else {
             alert(data.message);
-        }
+        }			
+		
     })
     .catch(error => {
         console.error('찜 처리 중 오류:', error);
@@ -76,6 +79,7 @@ function toggleWishlist(productId, buttonElement) {
     .finally(() => {
         // 버튼 재활성화
         buttonElement.style.pointerEvents = 'auto';
+		
     });
 }
 

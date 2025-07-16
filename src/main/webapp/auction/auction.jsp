@@ -462,34 +462,20 @@
             <% if(productList != null && !productList.isEmpty()) { %>
             <div class="product-grid">
                 <% for(ProductDTO product : productList) { 
-                    // 경매 종료 시간 계산 (디버깅 코드 추가)
                     long timeLeft = 0;
                     long daysLeft = 0;
                     long hoursLeft = 0;
                     boolean isAuctionEnded = false;
-                    
-                    // 디버깅 정보 출력
-                    System.out.println("=== 디버깅 정보 ===");
-                    System.out.println("상품명: " + product.getProductName());
-                    System.out.println("현재시간: " + now);
-                    System.out.println("종료시간: " + product.getEndTime());
-                    System.out.println("상품상태: " + product.getStatus());
                     
                     if (product.getEndTime() != null) {
                         timeLeft = product.getEndTime().getTime() - now.getTime();
                         daysLeft = timeLeft / (1000 * 60 * 60 * 24);
                         hoursLeft = (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
                         isAuctionEnded = timeLeft <= 0;
-                        
-                        System.out.println("시간차이(ms): " + timeLeft);
-                        System.out.println("남은일수: " + daysLeft);
-                        System.out.println("남은시간: " + hoursLeft);
-                        System.out.println("종료여부: " + isAuctionEnded);
                     } else {
                         isAuctionEnded = true; // 종료 시간이 없으면 종료로 간주
                         System.out.println("종료시간이 NULL이므로 종료로 간주");
                     }
-                    System.out.println("===================");
                 %>
                 <div class="product-card" onclick="location.href='<%=ctx%>/product/productDetail.jsp?productId=<%= product.getProductId() %>'">
                     <div class="product-image">
