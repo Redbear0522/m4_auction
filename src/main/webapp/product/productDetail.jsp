@@ -577,7 +577,6 @@
                                        class="bid-input"
                                        placeholder="<%=String.format("%,d", currentPrice + 10000)%>"
                                        min="<%=currentPrice + 1000%>"
-                                       step="1000"
                                        required>
                             </div>
                             <button type="submit" class="bid-button">

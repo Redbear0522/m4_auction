@@ -2,18 +2,12 @@
  * 찜 기능 전역 JavaScript
  * 모든 페이지에서 사용 가능한 찜 기능
  */
-
-<<<<<<< HEAD
 // 컨텍스트 경로 가져오기
 function getContextPath() {
     const pathArray = window.location.pathname.split('/');
     const appPath = "/" + pathArray[1];
     return appPath;
 }
-
-=======
->>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
-// 찜 기능 초기화
 function initWishlist() {
     updateWishlistCount();
     
@@ -40,11 +34,7 @@ function toggleWishlist(productId, buttonElement) {
     const loginUser = document.querySelector('.user-link, .welcome-text');
     if (!loginUser || loginUser.textContent.includes('Welcome to M4 Auction')) {
         if (confirm('로그인이 필요한 서비스입니다. 로그인하시겠습니까?')) {
-<<<<<<< HEAD
             window.location.href = getContextPath() + '/member/luxury-login.jsp';
-=======
-            window.location.href = '/acu/member/luxury-login.jsp';
->>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
         }
         return;
     }
@@ -56,11 +46,7 @@ function toggleWishlist(productId, buttonElement) {
     // 버튼 비활성화 (중복 클릭 방지)
     buttonElement.style.pointerEvents = 'none';
     
-<<<<<<< HEAD
     fetch(getContextPath() + '/wishlist/wishlistAction.jsp', {
-=======
-    fetch('/acu/wishlist/wishlistAction.jsp', {
->>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -121,11 +107,7 @@ function updateWishlistCount(count) {
         }
     } else {
         // 서버에서 현재 카운트 조회
-<<<<<<< HEAD
         fetch(getContextPath() + '/wishlist/getWishlistCount.jsp')
-=======
-        fetch('/acu/wishlist/getWishlistCount.jsp')
->>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
         .then(response => response.json())
         .then(data => {
             if (data.success && wishlistCountElement) {
@@ -208,11 +190,7 @@ function loadWishlistStatus() {
     
     const productIds = Array.from(wishlistButtons).map(btn => btn.getAttribute('data-product-id'));
     
-<<<<<<< HEAD
     fetch(getContextPath() + '/wishlist/checkWishlistStatus.jsp', {
-=======
-    fetch('/acu/wishlist/checkWishlistStatus.jsp', {
->>>>>>> 0d73d1d8f9b1dc6d1c61782b5298c9c1a7778caa
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
