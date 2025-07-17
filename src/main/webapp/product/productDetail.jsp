@@ -683,11 +683,11 @@
                 return false;
             }
             if (bidPrice <= currentPrice) {
-                alert(`입찰가는 현재가(${currentPrice.toLocaleString()}원)보다 높아야 합니다.`);
+                alert(`입찰가는 현재가보다 높아야 합니다.`);
                 return false;
             }
             
-            return confirm(`${bidPrice.toLocaleString()}원으로 입찰하시겠습니까?`);
+            return confirm(`입찰하시겠습니까?`);
         }
         
         // 즉시구매 함수
@@ -742,10 +742,6 @@
                 });
             }
         }
-        
-        // 관심상품 기능은 wishlist.js에서 처리됩니다
-        
-        // 타이머 제거됨 - 정적 마감일시 사용
         
         // 이미지 로드 실패시 대체 이미지로 변경
         document.addEventListener('DOMContentLoaded', function() {

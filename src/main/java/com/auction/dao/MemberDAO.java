@@ -32,8 +32,8 @@ public class MemberDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             // 비밀번호는 SHA256.encrypt(userPwd)로 암호화해서 비교
-            //pstmt.setString(2, SHA256.encrypt(userPwd));
-            pstmt.setString(2, userPwd);
+            pstmt.setString(2, SHA256.encrypt(userPwd));
+            //pstmt.setString(2, userPwd);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {

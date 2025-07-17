@@ -27,7 +27,7 @@
         return;
     }
 
-    // Gmail SMTP 설정 (앱 비밀번호 필수)
+    // Gmail SMTP 설정 
     final String username = "jjhansol2196@gmail.com"; // 본인 gmail
     final String password = "zyjq jhed lbfn yfbq";    // 앱 비밀번호 (16자리)
     String toEmail = "jjhansol4158@gmail.com";        // 실제 받을 관리자 이메일

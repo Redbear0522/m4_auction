@@ -25,7 +25,8 @@ public class ProductDAO {
 	//모든 상품 조회
 	public List<ProductDTO> selectAllProducts(Connection conn) {
 	    List<ProductDTO> list = new ArrayList<>();
-	    String sql = "SELECT PRODUCT_ID, PRODUCT_NAME, START_PRICE, CURRENT_PRICE, IMAGE_RENAMED_NAME, SELLER_ID, STATUS FROM PRODUCT ORDER BY PRODUCT_ID DESC";
+	    String sql = "SELECT PRODUCT_ID, PRODUCT_NAME, START_PRICE, CURRENT_PRICE, IMAGE_RENAMED_NAME, SELLER_ID, "
+	    		+ "STATUS FROM PRODUCT ORDER BY PRODUCT_ID DESC";
 	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
 	         ResultSet rs = pstmt.executeQuery()) {
 	        while (rs.next()) {

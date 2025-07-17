@@ -625,7 +625,7 @@
                         <select class="filter-select" id="statusFilter">
                             <option value="">전체</option>
                             <option value="VALID">유효</option>
-                            <option value="OUTBID">경합패배</option>
+                            <option value="OUTBID">낙찰실패</option>
                             <option value="WINNING">낙찰예정</option>
                         </select>
                     </div>
@@ -699,7 +699,7 @@
                                     statusText = "낙찰예정";
                                 } else {
                                     statusClass = "status-outbid";
-                                    statusText = "경합패배";
+                                    statusText = "낙찰실패";
                                 }
                             } else if ("A".equals(productStatus)) {
                                 // 진행중인 경매
@@ -708,7 +708,7 @@
                                     statusText = "최고가";
                                 } else {
                                     statusClass = "status-outbid";
-                                    statusText = "경합중";
+                                    statusText = "경매 진행중";
                                 }
                             }
                         %>

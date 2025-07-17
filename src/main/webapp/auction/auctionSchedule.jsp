@@ -221,10 +221,6 @@
             transform: translateY(-1px);
         }
         
-        .event-item.live {
-            background: #dc2626;
-        }
-        
         .event-item.online {
             background: #059669;
         }
@@ -349,10 +345,6 @@
             margin-bottom: 8px;
         }
         
-        .schedule-badge.live {
-            background: #dc2626;
-        }
-        
         .schedule-badge.online {
             background: #059669;
         }
@@ -398,10 +390,6 @@
             width: 16px;
             height: 16px;
             border-radius: 4px;
-        }
-        
-        .legend-color.live {
-            background: #dc2626;
         }
         
         .legend-color.online {
@@ -464,10 +452,6 @@
         <div class="container">
             <!-- Navigation -->
             <div class="schedule-nav">
-                <a href="<%=ctx%>/auction/liveAuction.jsp" class="nav-btn">
-                    <i class="fas fa-broadcast-tower"></i>
-                    라이브 경매
-                </a>
                 <a href="<%=ctx%>/auction/auctionList.jsp" class="nav-btn">
                     <i class="fas fa-globe"></i>
                     온라인 경매
@@ -535,7 +519,6 @@
                             <div class="day-number"><%=day%></div>
                             <div class="day-events">
                                 <% if (day == 11 || day == 25) { %>
-                                    <div class="event-item live">라이브 경매</div>
                                 <% } %>
                                 <% if (day == 5 || day == 19) { %>
                                     <div class="event-item online">온라인 경매</div>
@@ -563,10 +546,6 @@
                 <!-- 범례 -->
                 <div class="legend">
                     <div class="legend-item">
-                        <div class="legend-color live"></div>
-                        <span>라이브 경매</span>
-                    </div>
-                    <div class="legend-item">
                         <div class="legend-color online"></div>
                         <span>온라인 경매</span>
                     </div>
@@ -583,20 +562,19 @@
                     <h3 class="list-title">예정된 경매</h3>
                     <div class="filter-tabs">
                         <button class="filter-tab active" onclick="filterSchedule('all')">전체</button>
-                        <button class="filter-tab" onclick="filterSchedule('live')">라이브</button>
                         <button class="filter-tab" onclick="filterSchedule('online')">온라인</button>
                     </div>
                 </div>
                 
                 <div class="schedule-items">
-                    <div class="schedule-item" data-type="live">
+                    <div class="schedule-item" data-type="online">
                         <div class="schedule-date">
                             <div class="date-month">JAN</div>
                             <div class="date-day">11</div>
                             <div class="date-weekday">토</div>
                         </div>
                         <div class="schedule-content">
-                            <span class="schedule-badge live">LIVE</span>
+                            <span class="schedule-badge online">online</span>
                             <h4 class="schedule-event-title">근현대 미술 경매</h4>
                             <p class="schedule-time">오후 2:00 - 6:00</p>
                             <p class="schedule-description">김환기, 이우환, 박수근 등 한국 근현대 거장들의 대표작품 100여점</p>
@@ -631,14 +609,14 @@
                         </div>
                     </div>
                     
-                    <div class="schedule-item" data-type="live">
+                    <div class="schedule-item" data-type="online">
                         <div class="schedule-date">
                             <div class="date-month">JAN</div>
                             <div class="date-day">25</div>
                             <div class="date-weekday">토</div>
                         </div>
                         <div class="schedule-content">
-                            <span class="schedule-badge live">LIVE</span>
+                            <span class="schedule-badge live">online</span>
                             <h4 class="schedule-event-title">서양화 컬렉션 경매</h4>
                             <p class="schedule-time">오후 2:00 - 5:00</p>
                             <p class="schedule-description">유럽 및 미국 현대 작가들의 회화, 조각 작품 경매</p>
@@ -683,7 +661,7 @@
         // 캘린더 이벤트 클릭 시
         document.querySelectorAll('.event-item').forEach(item => {
             item.addEventListener('click', function() {
-                alert('경매 상세 정보 페이지로 이동');
+                alert('예정된 경매부분에서 확인 부탁드립니다.');
             });
         });
         
@@ -691,7 +669,7 @@
         document.querySelectorAll('.schedule-item').forEach(item => {
             item.addEventListener('click', function() {
                 // 해당 경매 페이지로 이동
-                window.location.href = '<%=ctx%>/auction/liveAuction.jsp';
+                window.location.href = '<%=ctx%>/auction/auction.jsp';
             });
         });
     </script>
